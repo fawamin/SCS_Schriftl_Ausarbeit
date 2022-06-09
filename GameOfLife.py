@@ -1,50 +1,48 @@
+from asyncio.windows_events import NULL
 import pygame
 import numpy
 
 
 coldead = (0,0,0)
 colalive = (255,255,255)
+class GameOfLife:
 
-def createandfill2darray(rows,columns):
-    array = numpy.zeros((rows,columns))
-    return array
+    #Play area
+    array = NULL
+    #Size of play Area
+    row = 0
+    col = 0
+    #Filename of save file
+    File = NULL
 
-def NextDay(surface,array,size):
-    for row, column in numpy.ndindex(array.shape):
-        pygame.draw.rect(surface, colalive , (row*size, column*size, size-1, size-1))
+    #def cycleDay(self):
+    #    newDay = self.array.copy()
+    #         for rows,cols in numpy.ndindex(self.array.shape):
+    #       print(self.array[rows,cols])
 
+    # Läd Daten aus .npy Speicherdatei
+    def loadFileData(self, File):
+        self.File = File
+        self.array = numpy.load(self.File)
+        self.row, self.col = self.array.shape
 
-def main():
-    ## Init
-    pygame.init()
-    windowsize = 750
-    screen = pygame.display.set_mode((windowsize, windowsize))
-    pygame.display.set_caption("Game of Life")
-    clock = pygame.time.Clock()
-    ## My code
-    arraysize = 50
-    array = createandfill2darray(arraysize,arraysize)
-    squaresize = windowsize/arraysize
-    NextDay(screen,array,squaresize)
-    
-    
-    print(array)
-    
-    
-    
-    
-    
-    ## Main loop
-    running = True
-    while running:
-        ## Stuff i did
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        pygame.display.flip()
-        clock.tick(60)
+    # Speichert Aktuellen Zustand in .npy Datei
+    def saveFile(self, File):
+        self.File = File
+        numpy.save(self.File, self.array)
+
+    # Returns play Area
+    def getField(self):
+        return self.array
+
+    # Erstellt neues Spielfeld mit den angegebenen Dimensionen
+    def createNewArea(self, row,col):
+        self.row = row
+        self.col = col
+        self.array = numpy.zeros((row,col), dtype=int)
+        
 
 
-if __name__ == "__main__":
-    main()
-    pygame.quit()
+gol = GameOfLife()
+gol.loadFileData("Saves/test.npy")
+gol.cycleDay()
