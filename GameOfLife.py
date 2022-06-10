@@ -1,24 +1,49 @@
-from asyncio.windows_events import NULL
 import pygame
 import numpy
 
 
 coldead = (0,0,0)
 colalive = (255,255,255)
+
+# 1 = alive
+# 0 = dead
+
 class GameOfLife:
 
     #Play area
-    array = NULL
-    #Size of play Area
-    row = 0
-    col = 0
+    array = None
     #Filename of save file
-    File = NULL
+    File = None
 
-    #def cycleDay(self):
-    #    newDay = self.array.copy()
-    #         for rows,cols in numpy.ndindex(self.array.shape):
-    #       print(self.array[rows,cols])
+    def cycleDay(self):
+        newDay = self.array.copy()
+        rows, cols = self.array.shape
+        for row, col in numpy.ndindex(self.array.shape):
+            #Werte der nachbarn im array ermitteln
+            # Nachbarwerte Ermitteln (Entrhält eigenen Wert)
+            nachbar = self.array[max(row-1,0):min(row+2,rows), max(col-1,0):min(col+2,cols)]
+            # Anzahl der lebenden Nachbarn ermitteln (Eigenen wert abziehen)
+            amount_alive = nachbar.sum() - self.array[row,col]
+            
+            # Regeln für die nächste Generation
+            if self.array[row,col] == 1:
+                if amount_alive < 2 or amount_alive > 3:
+                    newDay[row,col] = 0
+                else:
+                    newDay[row,col] = 1
+            else:
+                if amount_alive == 3:
+                    newDay[row,col] = 1
+                else:
+                    newDay[row,col] = 0
+        self.array = newDay
+        
+    def printToConsole(self):
+        rows, cols = self.array.shape
+        for row in range(rows):
+            for col in range(cols):
+                print(self.array[row,col], end = " ")
+            print()
 
     # Läd Daten aus .npy Speicherdatei
     def loadFileData(self, File):
@@ -41,8 +66,13 @@ class GameOfLife:
         self.col = col
         self.array = numpy.zeros((row,col), dtype=int)
         
-
-
 gol = GameOfLife()
-gol.loadFileData("Saves/test.npy")
-gol.cycleDay()
+gol.loadFileData("Saves/5x5test.npy")
+#gol.createNewArea(5,5)
+gol.printToConsole()
+for i in range(1,4):
+    print(i)
+    gol.cycleDay()
+    gol.printToConsole()
+    print()
+#gol.saveFile("Saves/5x5test.npy")
