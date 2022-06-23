@@ -7,6 +7,7 @@ colalive = (255,255,255)
 
 # 1 = alive
 # 0 = dead
+# test
 
 class GameOfLife:
 
