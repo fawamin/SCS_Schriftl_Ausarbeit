@@ -19,7 +19,6 @@ class GameOfLife:
         newDay = self.array.copy()
         rows, cols = self.array.shape
         for row, col in numpy.ndindex(self.array.shape):
-            #Werte der nachbarn im array ermitteln
             # Nachbarwerte Ermitteln (Entrhält eigenen Wert)
             nachbar = self.array[max(row-1,0):min(row+2,rows), max(col-1,0):min(col+2,cols)]
             # Anzahl der lebenden Nachbarn ermitteln (Eigenen wert abziehen)
@@ -65,14 +64,26 @@ class GameOfLife:
         self.row = row
         self.col = col
         self.array = numpy.zeros((row,col), dtype=int)
+
+    #Changes the selected Cell at the Position X and Y between alive and dead
+    def updateCell(self,cellX,cellY):
+        try:
+            isalive = self.array[cellX,cellY]
+            if isalive == 0:
+                self.array[cellX,cellY] = 1
+            elif isalive == 1:
+                self.array[cellX,cellY] = 0
+        except:
+            print("Position " + str(cellX) + " " + str(cellY) + " Is out of the Array Range") 
+    
         
 gol = GameOfLife()
-gol.loadFileData("Saves/5x5test.npy")
-#gol.createNewArea(5,5)
+gol.loadFileData("Saves/10x10Glider.npy")
+#gol.createNewArea(10,10)
 gol.printToConsole()
-for i in range(1,4):
-    print(i)
-    gol.cycleDay()
-    gol.printToConsole()
-    print()
-#gol.saveFile("Saves/5x5test.npy")
+gol.saveFile("Saves/10x10Glider.npy")
+#for i in range(1,10):
+#    print(i)
+#    gol.cycleDay()
+#    gol.printToConsole()
+#    print()
