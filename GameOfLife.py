@@ -75,15 +75,3 @@ class GameOfLife:
                 self.array[cellX,cellY] = 0
         except:
             print("Position " + str(cellX) + " " + str(cellY) + " Is out of the Array Range") 
-    
-        
-gol = GameOfLife()
-gol.loadFileData("Saves/10x10Glider.npy")
-#gol.createNewArea(10,10)
-gol.printToConsole()
-gol.saveFile("Saves/10x10Glider.npy")
-#for i in range(1,10):
-#    print(i)
-#    gol.cycleDay()
-#    gol.printToConsole()
-#    print()
