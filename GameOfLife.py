@@ -1,4 +1,3 @@
-import pygame
 import numpy
 
 
@@ -46,14 +45,16 @@ class GameOfLife:
             print()
 
     # Läd Daten aus .npy Speicherdatei
-    def loadFileData(self, File):
-        self.File = File
+    def loadFileData(self):
         self.array = numpy.load(self.File)
-        self.row, self.col = self.array.shape
+        #self.row, self.col = self.array.shape
+
+    #Sets the Save Filename  
+    def setSaveFile(self,filename):
+        self.File = filename
 
     # Speichert Aktuellen Zustand in .npy Datei
-    def saveFile(self, File):
-        self.File = File
+    def saveFile(self):
         numpy.save(self.File, self.array)
 
     # Returns play Area

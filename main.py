@@ -1,11 +1,12 @@
-import GameOfLife
+from GameOfLife import GameOfLife
 
 gol = GameOfLife()
-gol.loadFileData("Saves/10x10Glider.npy")
+gol.setSaveFile("Saves/5x5test.npy")
+gol.loadFileData()
 #gol.createNewArea(10,10)
 gol.printToConsole()
 #gol.saveFile("Saves/10x10Glider.npy")
-for i in range(1,25):
+for i in range(1,5):
     print(i)
     gol.cycleDay()
     gol.printToConsole()
