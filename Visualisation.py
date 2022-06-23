@@ -19,6 +19,7 @@ SCREEN_Width = 600
 SCREEN_Height = 600
 screen = pygame.display.set_mode((SCREEN_Width, SCREEN_Height))
 
+
 class DisplayGOL:
 
     gol = None
@@ -33,14 +34,19 @@ class DisplayGOL:
         self.dh = displayheight
 
     def TestPeparationMethod(self):
-        self.gol.setSaveFile("Saves/5x5test.npy")
+        self.gol.setSaveFile("Saves/10x10Glider.npy")
         self.gol.loadFileData() 
-        #Event to cycle day every t
-        DAYEVENT, t = pygame.USEREVENT+1, 500
-        pygame.time.set_timer(DAYEVENT,t)
+        #DAYEVENT is event type thats user generated
+        DAYEVENT  = pygame.USEREVENT+1
+        # cyclelenght is the lenght in ms 
+        cyclelenght = 500
+        # Sets a Timer that triggers the DAYEVENT every cyclelenght ms
+        pygame.time.set_timer(DAYEVENT,cyclelenght)
         running = True
+        #Render Screen once before first Cycle
+        self.renderScreen()
         while running:
-            #screen.fill((255, 255, 255))
+            self.renderScreen()
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
@@ -48,8 +54,8 @@ class DisplayGOL:
                 elif event.type == QUIT:
                     running = False
                 if event.type == DAYEVENT:
-                    self.renderScreen()
                     self.gol.cycleDay()
+                    self.renderScreen()
 
 
 
@@ -67,7 +73,7 @@ class DisplayGOL:
             elif field[row,col] == 1:
                 colour = self.colalive
             #Draw Cell
-            pygame.draw.rect(screen,colour,(row * width,col * height,width,height))
+            pygame.draw.rect(screen,colour,(row * width - 2 ,col * height -2 , width -2 , height- 2))
         #Update display
         pygame.display.update()
 
