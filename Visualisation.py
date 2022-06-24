@@ -34,7 +34,7 @@ class DisplayGOL:
         self.dh = displayheight
 
     def TestPeparationMethod(self):
-        self.gol.setSaveFile("Saves/10x10Glider.npy")
+        self.gol.setSaveFile("Saves/5x5test.npy")
         self.gol.loadFileData() 
         #DAYEVENT is event type thats user generated
         DAYEVENT  = pygame.USEREVENT+1

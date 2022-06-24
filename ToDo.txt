@@ -2,3 +2,9 @@ GameOfLife.py:
     https://stackoverflow.com/questions/20403675/how-to-create-a-4-way-split-screen-in-pygame
     Update the renderScreen Method to not render on the entire Screen but rather on its own area (see stackoverflow link)
     should be possible by adding a new variable to the line "pygame.draw.rect"
+
+
+Webservice:
+    FastAPI
+    (Array to Image hilfe:)
+    https://github.com/fhswf/FerienkursKI/blob/main/MNIST.ipynb
