@@ -35,6 +35,6 @@ def set_gol_file(file: File,response: Response):
     except:
         response.status_code = 404
 
-@app.get("/gol/cycle")
+@app.post("/gol/cycle")
 def cycle():
     connection.api_cycle()
