@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI,HTTPException,Response
+from fastapi.middleware.cors import CORSMiddleware
 from api import Api
 from pydantic import BaseModel
 
@@ -9,9 +10,20 @@ class File(BaseModel):
 app = FastAPI()
 connection = Api()
 
-@app.get("/gol/", responses = {200:{"content":{"image/png":{}}}})
+# @TODO Properly configure CORS 
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/gol/")
 def get_day():
-    return connection.get_img()
+    return connection.get_array()
 
 @app.post("/gol/")
 def set_gol_file(file: File,response: Response):   

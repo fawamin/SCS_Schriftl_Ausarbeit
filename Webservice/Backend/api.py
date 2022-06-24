@@ -21,11 +21,9 @@ class Api:
         self.GOL_instance.setSaveFile(file)
         self.GOL_instance.loadFileData()
         
-    def get_img(self):
-        array = self.GOL_instance.getField()
-        return Image.fromarray(np.uint8(array)*255,'L')
-        #print(array)
-        #return np.array2string(array)
+    # Returns a List representation of the Game of Life Board 
+    def get_array(self):
+        return self.GOL_instance.getField().tolist()
 
     def api_cycle(self):
         self.GOL_instance.cycleDay()
