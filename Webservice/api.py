@@ -10,28 +10,33 @@ from GameOfLife import GameOfLife
 #img.show()
 
 class Api:
-    gol = None
-    def __init__(self):
-        self.gol = GameOfLife()
-        self.gol.setSaveFile(File)
 
-    def set_file(self,file):
-        self.gol.setSaveFile = file
+    #GOL_instance  = None
+
+    def __init__(self):
+        self.GOL_instance = GameOfLife()
+        print(self.GOL_instance.getField)
+
+    def init_file(self,file):
+        self.GOL_instance.setSaveFile(file)
+        self.GOL_instance.loadFileData()
         
     def get_img(self):
-        array = self.gol.getField()
+        array = self.GOL_instance.getField()
         return Image.fromarray(np.uint8(array)*255,'L')
+        #print(array)
+        #return np.array2string(array)
 
     def api_cycle(self):
-        self.gol.cycleDay()
+        self.GOL_instance.cycleDay()
 
     # @TODO Add a function that gets all alive Cells in a Json
     def get_alive(self):
         storage ={}
-        array = self.gol.getField
+        array = self.GOL_instance.getField
         for row,col in np.ndindex(self.array.shape):
             if array[row][col] == 1:
-                storage.
+                pass
 
 #img = Image.new('1', (x,y))
 #pixel = img.load()
