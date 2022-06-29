@@ -9,7 +9,7 @@ saveFiles = [
 
 gol = GameOfLife()
 gol.setSaveFile(saveFiles[1])
-gol.loadFileData()
+#gol.loadFileData()
 #gol.createNewArea(10,10)
 gol.printToConsole()
 #gol.saveFile("Saves/10x10Glider.npy")

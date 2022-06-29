@@ -1,0 +1,19 @@
+div canvas{
+    width: 500px;
+    height: 500px;
+    background-color: white;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+/*Source https://stackoverflow.com/questions/42588501/how-do-i-fix-blurry-shape-edges-in-html5-canvas*/
+canvas {
+    /* all four are needed to support the most browsers */
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
