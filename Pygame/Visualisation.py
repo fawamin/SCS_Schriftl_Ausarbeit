@@ -1,8 +1,12 @@
+from matplotlib.pyplot import cla
 import numpy as np
 import pygame
 import sys
 
+import pygame_menu
+
 from GameOfLife import GameOfLife
+import settings
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -79,5 +83,96 @@ class DisplayGOL:
 
 
 
-di = DisplayGOL(SCREEN_Width,SCREEN_Height)
-di.TestPeparationMethod()
+# di = DisplayGOL(SCREEN_Width,SCREEN_Height)
+# di.TestPeparationMethod()
+
+
+def main():
+    """
+    Main function of the program.
+    """
+    # Initialize Pygame
+    pygame.init()
+    # Create the screen
+    screen = pygame.display.set_mode(settings.WINDOW_SIZE)
+    # Clock for managing the FPS
+    clock = pygame.time.Clock()
+    # Set the window title
+    pygame.display.set_caption(settings.CAPTION_BASE)
+    
+
+    # -------------------------------------------------------------------------
+    # Create menus: Play Menu
+    # -------------------------------------------------------------------------
+    menuPlay = pygame_menu.Menu(
+        settings.CAPTION_BASE,
+        settings.WINDOW_WIDTH,
+        settings.WINDOW_HEIGHT,
+        mouse_motion_selection=True,
+        theme = pygame_menu.themes.THEME_DARK.copy(),
+    )
+    menuPlay._disable_widget_update_mousepos_mouseselection = True
+
+    menuPlay.add.button('Start',  # When pressing return -> play(DIFFICULTY[0], font) \n play_function,\nDIFFICULTY,\n pygame.font.Font(pygame_menu.font.FONT_FRANCHISE, 30)
+                         pygame_menu.events.BACK)
+    menuPlay.add.button('Return to main menu', pygame_menu.events.BACK)
+
+    # -------------------------------------------------------------------------
+    # Create menus:About
+    # -------------------------------------------------------------------------
+    menuAbout = pygame_menu.Menu(
+        settings.TITLE_ABOUT,
+        settings.WINDOW_WIDTH,
+        settings.WINDOW_HEIGHT,
+        mouse_motion_selection=True,
+        theme = pygame_menu.themes.THEME_DARK.copy(),
+    )
+    menuAbout._disable_widget_update_mousepos_mouseselection = True
+
+    for about in settings.ABOUT:
+        menuAbout.add.label(about, align=pygame_menu.locals.ALIGN_LEFT, font_size=settings.FONT_SIZE)
+    menuAbout.add.vertical_margin(30)
+    menuAbout.add.button('Return to menu', pygame_menu.events.BACK)
+
+    # -------------------------------------------------------------------------
+    # Create menus: Main
+    # -------------------------------------------------------------------------
+    menuMain = pygame_menu.Menu(
+        settings.TITLE_MAIN_MENU,
+        settings.WINDOW_WIDTH,
+        settings.WINDOW_HEIGHT,
+        mouse_motion_selection=True,
+        theme = pygame_menu.themes.THEME_DARK.copy(),
+    )
+    menuMain._disable_widget_update_mousepos_mouseselection = True
+
+    menuMain.add.button('Play', menuPlay)
+    menuMain.add.button('About', menuAbout)
+    menuMain.add.button('Quit', pygame_menu.events.EXIT)
+    
+    # -------------------------------------------------------------------------
+    # Main loop
+    # -------------------------------------------------------------------------
+    while True:
+        #Tick
+        clock.tick(settings.FPS)
+    
+        # Application events
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+
+        # Main menu
+        if menuMain.is_enabled():
+            menuMain.mainloop(surface=screen, fps_limit=settings.FPS)
+
+        # Flip surface
+        pygame.display.flip()
+    
+    # Close the window and quit.
+    pygame.quit()
+    sys.exit()
+
+if __name__ == '__main__':
+    main()
