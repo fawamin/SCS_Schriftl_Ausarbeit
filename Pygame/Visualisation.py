@@ -19,9 +19,6 @@ from pygame.locals import (
 )
 
 pygame.init()
-SCREEN_Width = 600
-SCREEN_Height = 600
-screen = pygame.display.set_mode((SCREEN_Width, SCREEN_Height))
 
 
 class DisplayGOL:
@@ -32,10 +29,11 @@ class DisplayGOL:
     coldead = (255,255,255)
     colalive = (0,0,0)
 
-    def __init__(self,displaywidth,displayheight):
+    def __init__(self, displaywidth, displayheight):
         self.gol = GameOfLife()
         self.dw = displaywidth
         self.dh = displayheight
+        self.screen = pygame.display.set_mode((displaywidth, displayheight))
 
     def TestPeparationMethod(self):
         self.gol.setSaveFile("Saves/5x5test.npy")
@@ -48,9 +46,9 @@ class DisplayGOL:
         pygame.time.set_timer(DAYEVENT,cyclelenght)
         running = True
         #Render Screen once before first Cycle
-        self.renderScreen()
+        self.renderScreen(self.screen)
         while running:
-            self.renderScreen()
+            self.renderScreen(self.screen)
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
@@ -59,11 +57,11 @@ class DisplayGOL:
                     running = False
                 if event.type == DAYEVENT:
                     self.gol.cycleDay()
-                    self.renderScreen()
+                    self.renderScreen(self.screen)
 
 
 
-    def renderScreen(self):
+    def renderScreen(self, screen):
         screen.fill((255, 255, 255))
         field = self.gol.getField()
         rows, cols = field.shape
@@ -83,7 +81,7 @@ class DisplayGOL:
 
 
 
-# di = DisplayGOL(SCREEN_Width,SCREEN_Height)
+# di = DisplayGOL(600, 600)
 # di.TestPeparationMethod()
 
 
