@@ -30,14 +30,12 @@ class DisplayGOL:
     colalive = (0,0,0)
 
     def __init__(self, displaywidth, displayheight):
-        self.gol = GameOfLife()
+        self.gol = GameOfLife.fromFile("Saves/5x5test.npy")
         self.dw = displaywidth
         self.dh = displayheight
         self.screen = pygame.display.set_mode((displaywidth, displayheight))
 
     def TestPeparationMethod(self):
-        self.gol.setSaveFile("Saves/5x5test.npy")
-        self.gol.loadFileData() 
         #DAYEVENT is event type thats user generated
         DAYEVENT  = pygame.USEREVENT+1
         # cyclelenght is the lenght in ms 
@@ -117,9 +115,7 @@ def main():
                          pygame_menu.events.BACK)
     menuPlay.add.button('Return to main menu', pygame_menu.events.BACK)
 
-    gol = GameOfLife()
-    gol.setSaveFile(settings.SAVE_FILE)
-    gol.loadFileData()
+    gol = GameOfLife.fromFile(settings.SAVE_FILE)
     #DAYEVENT is event type thats user generated
     DAYEVENT  = pygame.USEREVENT+1
     # cyclelenght is the lenght in ms 
@@ -133,8 +129,6 @@ def main():
     renderSurface(playSurface, gol.getField())
 
     playWidget = menuPlay.add.surface(playSurface, selectable = True, selection_effect = pygame_menu.widgets.NoneSelection())
-    playWidget.set_col_row_index(1, 0, 2)
-    print(playWidget.get_col_row_index())
 
     # -------------------------------------------------------------------------
     # Create menus: About
