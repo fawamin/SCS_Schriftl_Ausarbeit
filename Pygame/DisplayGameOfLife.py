@@ -233,6 +233,12 @@ class DisplayGameOfLife:
         self._playMenu.draw(self._screen)
 
 
+    # resize
+    def resize(self, width: int, height: int):
+        if self._gameStarted and self._valuesSet:
+            self._playMenu.resize(width, height)
+    
+
     # exit
     def exit(self):
         # check if game is not started

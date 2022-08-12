@@ -30,7 +30,7 @@ class DisplayGameOfLifeMenu:
         if not pygame.get_init():
             pygame.init()
         # Create the screen
-        screen = pygame.display.set_mode(settings.WINDOW_SIZE)
+        screen = pygame.display.set_mode(settings.WINDOW_SIZE, pygame.RESIZABLE)
         # Clock for managing the FPS
         clock = pygame.time.Clock()
         # Set the window title
@@ -44,8 +44,8 @@ class DisplayGameOfLifeMenu:
         # -------------------------------------------------------------------------
         menuPlay = pygame_menu.Menu(
             settings.CAPTION_BASE,
-            settings.WINDOW_WIDTH,
-            settings.WINDOW_HEIGHT,
+            screen.get_width(),
+            screen.get_height(),
             mouse_motion_selection=True,
             theme = pygame_menu.themes.THEME_DARK.copy(),
             columns = 2,
@@ -63,8 +63,8 @@ class DisplayGameOfLifeMenu:
         # -------------------------------------------------------------------------
         menuAbout = pygame_menu.Menu(
             settings.TITLE_ABOUT,
-            settings.WINDOW_WIDTH,
-            settings.WINDOW_HEIGHT,
+            screen.get_width(),
+            screen.get_height(),
             mouse_motion_selection=True,
             theme = pygame_menu.themes.THEME_DARK.copy(),
         )
@@ -81,8 +81,8 @@ class DisplayGameOfLifeMenu:
         # -------------------------------------------------------------------------
         self.menuMain = pygame_menu.Menu(
             settings.TITLE_MAIN_MENU,
-            settings.WINDOW_WIDTH,
-            settings.WINDOW_HEIGHT,
+            screen.get_width(),
+            screen.get_height(),
             mouse_motion_selection=True,
             theme = pygame_menu.themes.THEME_DARK.copy(),
         )
@@ -106,10 +106,19 @@ class DisplayGameOfLifeMenu:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-            if event.type == DAYEVENT:
-                gol.cycleDay()
-                renderSurface(playSurface, gol.getField())
-                playWidget.force_menu_surface_update()
+                elif event.type == pygame.VIDEORESIZE:
+                    width, height = screen.get_size()
+                    minWidth, minHeight = settings.MIN_WINDOW_SIZE
+                    if width < minWidth or height < minHeight:
+                        if width < minWidth:
+                            width = minWidth
+                        if height < minHeight:
+                            height = minHeight
+                        screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+                    self.menuMain.resize(width, height)
+                    menuPlay.resize(width, height)
+                    menuAbout.resize(width, height)
+                    self.dGOL.resize(width, height)
 
             # Main menu
             if self.menuMain.is_enabled():
