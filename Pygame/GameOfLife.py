@@ -90,7 +90,8 @@ class GameOfLife:
         """
         if not 0 <= x < self.rows or not 0 <= y < self.cols:
             raise ValueError("Invalid cell position (0 <= x < {sef.rows}, 0 <= y < {sef.cols})")
-        self.array[x, y] = 1
+        if self.array[x, y] == 0:
+            self.array[x, y] =  1
 
 
     # kills a cell at the given position
@@ -140,7 +141,7 @@ class GameOfLife:
                     if self.array[i, j] >= 1:
                         liveNeighbors += 1
 
-        if self.array[x, y] == 1:
+        if self.array[x, y] >= 1:
             liveNeighbors -= 1
 
         return liveNeighbors
