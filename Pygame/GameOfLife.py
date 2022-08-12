@@ -15,19 +15,35 @@ class GameOfLife:
 
 
     # Create new instance of GameOfLife with the given settings
-    def __init__(self, rows: int, cols: int, infinityPlayArea: bool = False):
+    def __init__(self, array: numpy.ndarray, rows: int, cols: int, infinityPlayArea: bool = False):
         """
         Initializes a new GameOfLife instance with the given settings.
+        :param array: The play area of the GameOfLife.
         :param rows: The number of rows in the play area.
         :param cols: The number of columns in the play area.
         :param infinityPlayArea: If true, the play area borders are connected.
         """
         if rows < 1 or cols < 1:
             raise ValueError("Invalid row or column count (must be greater than 0)")
-        self.array = numpy.zeros((rows, cols), dtype = int)
+        if array.shape != (rows, cols):
+            raise ValueError("Invalid array shape (must be (rows, cols))")
+        self.array = array
         self.rows = rows
         self.cols = cols
         self.infinityPlayArea = infinityPlayArea
+
+
+    # Creates a new GameOfLife instance with the given settings
+    @classmethod
+    def fromSettings(cls, rows: int, cols: int, infinityPlayArea: bool = False):
+        """
+        Creates a new GameOfLife instance with the given settings.
+        :param rows: The number of rows in the play area.
+        :param cols: The number of columns in the play area.
+        :param infinityPlayArea: If true, the play area borders are connected.
+        :return: The new GameOfLife instance.
+        """
+        return cls(numpy.zeros((rows, cols)), rows, cols, infinityPlayArea)
 
 
     # Creates a new GameOfLife Instance from loaded File
@@ -44,9 +60,7 @@ class GameOfLife:
         except Exception as e:
             raise ValueError("Could not load file: \n" + str(e))
         rows, cols = array.shape
-        self = cls(rows, cols, infinityPlayArea)
-        self.array = array
-        return self
+        return cls(array, rows, cols, infinityPlayArea)
 
         
     def printToConsole(self):
