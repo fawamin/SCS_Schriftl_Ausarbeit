@@ -197,7 +197,7 @@ class DisplayGameOfLife:
     # update events
     def update(self, events: list[pygame.event.Event]):
 
-        pattern = [[1]]
+        pattern = [[1, 0], [0, 1]]
 
         # check if instance is enabled#
         if not self.is_enabled():
@@ -316,3 +316,164 @@ class DisplayGameOfLife:
                     (x, y, self._cellSize, self._cellSize),
                     border_radius = self._cellBorderRadius
                 )
+
+
+    # calculate index from mouse position
+    def _calculateIndex(self):
+        # check if game is not started
+        if not self._gameStarted:
+            raise Exception("Game is not started")
+
+        # check if values are not set
+        if not self._valuesSet:
+            raise Exception("Values are not set")
+
+        # get mouse position
+        mouseX, mouseY = pygame.mouse.get_pos()
+        # get inner scroll area size
+        scrollAreaSIzeX, scrollAreaSIzeY = self._playMenu.get_scrollarea().get_size(True)
+
+        # check if mouse is over scroll area
+        if mouseX >= scrollAreaSIzeX or mouseY >= scrollAreaSIzeY:
+            return None
+
+        # get play surface position
+        playWidgetX, playWidgetY = self._playWidget.get_position()
+        # get scroll area position
+        scrollAreaOffsetsX, scrollAreaOffsetsY = self._playMenu.get_scrollarea().get_offsets()
+
+        # calculate index
+        indexX = (mouseX - playWidgetX + scrollAreaOffsetsX) // self._totalCellSize
+        indexY = (mouseY - playWidgetY + scrollAreaOffsetsY) // self._totalCellSize
+
+        # check if index is in range
+        if indexX < 0 or indexX >= self._cols or indexY < 0 or indexY >= self._rows:
+            return None
+        else:
+            return indexX, indexY
+
+
+    # preview pattern
+    def _previewPattern(self, pattern: list[list[int | None]]):
+        # check if game is not started
+        if not self._gameStarted:
+            raise Exception("Game is not started")
+
+        # check if values are not set
+        if not self._valuesSet:
+            raise Exception("Values are not set")
+        
+        maxPatternHight = len(pattern)
+        maxPatternWidth = 0
+        for i in range(maxPatternHight):
+            maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
+        
+        # check if pattern is valid
+        if maxPatternWidth > self._cols or maxPatternHight > self._rows:
+            raise Exception("Pattern is too big for play area")
+
+        # get index from mouse position
+        index = self._calculateIndex()
+
+        if index is not None and not self._infinityPlayArea:
+            # check if pattern is inside the play area
+            for i in range(maxPatternHight):
+                maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
+            if index[1] + maxPatternHight > self._rows or index[0] + maxPatternWidth > self._cols:
+                index = None
+
+        if index is not None:
+            # draw preview cells
+            previewSurface = pygame.Surface(self._drawSurface.get_size(), pygame.SRCALPHA)
+
+            for i in range(len(pattern)):
+                row = index[1] + i
+                if self._infinityPlayArea:
+                    row = row % self._rows
+                y = row * self._totalCellSize + self._cellMargin
+                hoverY = row * self._totalCellSize + self._cellHoverMargin
+                spaceY = row * self._totalCellSize + self._cellSpaceMargin
+
+                for j in range(len(pattern[i])):
+                    if pattern[i][j] == None or pattern[i][j] < 0:
+                        continue
+
+                    col = index[0] + j
+                    if self._infinityPlayArea:
+                        col = col % self._cols
+                    x = col * self._totalCellSize + self._cellMargin
+                    hoverX = col * self._totalCellSize + self._cellHoverMargin
+                    spaceX = col * self._totalCellSize + self._cellSpaceMargin
+
+                    if pattern[i][j] == 0:
+                        borderColor = (255, 0, 0, 255)
+                    else: # > 0
+                        borderColor = (0, 255, 0, 255)
+                    
+                    pygame.draw.rect(
+                        previewSurface,
+                        borderColor,
+                        (x, y, self._cellSize, self._cellSize),
+                        border_radius = self._cellBorderRadius
+                    )
+                    pygame.draw.rect(
+                        previewSurface,
+                        settings.COLOR_PLAY_SURFACE_BACKGROUND,
+                        (spaceX, spaceY, self._cellSpaceSize, self._cellSpaceSize),
+                        border_radius = self._cellBorderRadius
+                    )
+                    pygame.draw.rect(
+                        previewSurface,
+                        (0, 0, 0, 0),
+                        (hoverX, hoverY, self._cellHoverSize, self._cellHoverSize),
+                        border_radius = self._cellBorderRadius
+                    )
+            self._drawSurface.blit(previewSurface, (0, 0))
+
+
+    # set pattern
+    def _setPattern(self, pattern: list[list[int | None]]):
+        # check if game is not started
+        if not self._gameStarted:
+            raise Exception("Game is not started")
+
+        # check if values are not set
+        if not self._valuesSet:
+            raise Exception("Values are not set")
+        
+        maxPatternHight = len(pattern)
+        maxPatternWidth = 0
+        for i in range(maxPatternHight):
+            maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
+        
+        # check if pattern is valid
+        if maxPatternWidth > self._cols or maxPatternHight > self._rows:
+            raise Exception("Pattern is too big for play area")
+
+        # get index from mouse position
+        index = self._calculateIndex()
+
+        if index is not None and not self._infinityPlayArea:
+            # check if pattern is inside the play area
+            for i in range(maxPatternHight):
+                maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
+            if index[1] + maxPatternHight > self._rows or index[0] + maxPatternWidth > self._cols:
+                index = None
+
+        if index is not None:
+            for i in range(len(pattern)):
+                row = index[1] + i
+                if self._infinityPlayArea:
+                    row = row % self._rows
+                for j in range(len(pattern[i])):
+                    if pattern[i][j] == None or pattern[i][j] < 0:
+                        continue
+
+                    col = index[0] + j
+                    if self._infinityPlayArea:
+                        col = col % self._cols
+                        
+                    if pattern[i][j] == 0:
+                        self._gol.killCell(row, col)
+                    else: # > 0
+                        self._gol.bornCell(row, col)
