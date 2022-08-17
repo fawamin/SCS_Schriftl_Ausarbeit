@@ -150,6 +150,7 @@ class DisplayGameOfLife:
 
 
         self._playMenu.add.vertical_margin(15)
+        #Slider for Cyclespeed
         daySlider = self._playMenu.add.range_slider(
             "Day Cycle Speed", 
             0, 
@@ -160,7 +161,8 @@ class DisplayGameOfLife:
             onchange = self._onDayCycleSpeedChange,
             align = pygame_menu.locals.ALIGN_LEFT
         )
-
+        #Set Speed to 0
+        self._onDayCycleSpeedChange(0)
 
         self._playMenu.add.vertical_fill()
         self._playMenu.add.button("Return to Main Menu", self.exit, align = pygame_menu.locals.ALIGN_LEFT)
@@ -197,7 +199,7 @@ class DisplayGameOfLife:
     # update events
     def update(self, events: list[pygame.event.Event]):
 
-        pattern = [[1, 0], [0, 1]]
+        pattern = [[1, 1], [1, 1]]
 
         # check if instance is enabled#
         if not self.is_enabled():

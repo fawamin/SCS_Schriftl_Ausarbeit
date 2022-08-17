@@ -29,7 +29,7 @@ class DisplayGameOfLifeMenu:
         # Initialize Pygame if not already initialized
         if not pygame.get_init():
             pygame.init()
-        # Create the screen
+        # Create the screencd
         screen = pygame.display.set_mode(settings.WINDOW_SIZE, pygame.RESIZABLE)
         # Clock for managing the FPS
         clock = pygame.time.Clock()
@@ -71,7 +71,7 @@ class DisplayGameOfLifeMenu:
         menuAbout._disable_widget_update_mousepos_mouseselection = True
 
         for about in settings.ABOUT:
-            menuAbout.add.label(about, align=pygame_menu.locals.ALIGN_LEFT, font_size=settings.FONT_SIZE)
+          menuAbout.add.label(about, align=pygame_menu.locals.ALIGN_CENTER, font_size=settings.FONT_SIZE)
         menuAbout.add.vertical_margin(30)
         menuAbout.add.button('Return to menu', pygame_menu.events.BACK)
 
@@ -91,7 +91,6 @@ class DisplayGameOfLifeMenu:
         self.menuMain.add.button('Play', menuPlay)
         self.menuMain.add.button('About', menuAbout)
         self.menuMain.add.button('Quit', pygame_menu.events.EXIT)
-
 
         # -------------------------------------------------------------------------
         # Main loop
