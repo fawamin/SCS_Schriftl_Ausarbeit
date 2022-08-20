@@ -173,7 +173,6 @@ class DisplayGameOfLifeMenu:
         
         data = self.menuPlay.get_input_data()
         for key in data:
-            print(key, data[key])
             if key == "rows":
                 if int(data[key]) > 0:
                     rows = int(data[key])
