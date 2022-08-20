@@ -5,6 +5,7 @@ import pygame_menu.widgets
 import pygame_menu.themes
 import pygame_menu.events
 import pygame_menu.locals
+import os
 
 from DisplayGameOfLife import DisplayGameOfLife
 from pygame.locals import (
@@ -19,6 +20,7 @@ from pygame.locals import (
 )
 
 class DisplayGameOfLifeMenu:
+    menuPlay: pygame_menu.Menu
     menuMain: pygame_menu.Menu
     dGOL: DisplayGameOfLife
 
@@ -42,20 +44,45 @@ class DisplayGameOfLifeMenu:
         # -------------------------------------------------------------------------
         # Create menus: Play Menu
         # -------------------------------------------------------------------------
-        menuPlay = pygame_menu.Menu(
+        self.menuPlay = pygame_menu.Menu(
             settings.CAPTION_BASE,
             screen.get_width(),
             screen.get_height(),
-            mouse_motion_selection=True,
+            # mouse_motion_selection=True,
             theme = pygame_menu.themes.THEME_DARK.copy(),
             columns = 2,
-            rows = [2, 1],
+            rows = [5, 8],
         )
-        menuPlay._disable_widget_update_mousepos_mouseselection = True
+        self.menuPlay._disable_widget_update_mousepos_mouseselection = True
 
-        menuPlay.add.button('Start with Setting', self._startGameFromSttings)
-        menuPlay.add.button('Start From File', self._startGameFromFile)
-        menuPlay.add.button('Return to main menu', pygame_menu.events.BACK)
+        vMargin = 30
+        validIntChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+        self.menuPlay.add.toggle_switch("infinity play area: ", settings.DEFAULT_INFINITY_PLAY_AREA, toggleswitch_id = "infinityPlayArea")
+        self.menuPlay.add.text_input("Cell size (px): ", settings.DEFAULT_CELL_SIZE, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 3, textinput_id = "cellSize")
+        self.menuPlay.add.text_input("Cell margin (px): ", settings.DEFAULT_CELL_MARGIN, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellMargin")
+        self.menuPlay.add.text_input("Cell border radius (px): ", settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellBorderRadius")
+        self.menuPlay.add.text_input("Cell hover border width (px): ", settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellHoverBorderWidth")
+
+        self.menuPlay.add.text_input("Rows: ", settings.DEFAULT_ROWS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "rows")
+        self.menuPlay.add.text_input("Columns: ", settings.DEFAULT_COLS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "cols")
+        self.menuPlay.add.button('Start with Setting', self._startGameFromSttings)
+
+        self.menuPlay.add.vertical_margin(vMargin)
+        try:
+            saveFiles = [(file,) for file in os.listdir(settings.DIR_SAVE) if file.endswith(".npy")]
+        except FileNotFoundError:
+            saveFiles = []
+            self.menuPlay.add.label("Directory not found")
+        else:
+            if len(saveFiles) > 0:
+                self.menuPlay.add.dropselect("File: ", saveFiles, dropselect_id = "saveFile")
+            else:
+                self.menuPlay.add.label("No save files found")
+        self.menuPlay.add.button('Start From File', self._startGameFromFile)
+
+        self.menuPlay.add.vertical_margin(vMargin)
+        self.menuPlay.add.button('Return to main menu', pygame_menu.events.BACK)
 
 
         # -------------------------------------------------------------------------
@@ -88,7 +115,7 @@ class DisplayGameOfLifeMenu:
         )
         self.menuMain._disable_widget_update_mousepos_mouseselection = True
 
-        self.menuMain.add.button('Play', menuPlay)
+        self.menuMain.add.button('Play', self.menuPlay)
         self.menuMain.add.button('About', menuAbout)
         self.menuMain.add.button('Quit', pygame_menu.events.EXIT)
 
@@ -115,7 +142,7 @@ class DisplayGameOfLifeMenu:
                             height = minHeight
                         screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
                     self.menuMain.resize(width, height)
-                    menuPlay.resize(width, height)
+                    self.menuPlay.resize(width, height)
                     menuAbout.resize(width, height)
                     self.dGOL.resize(width, height)
 
@@ -136,29 +163,70 @@ class DisplayGameOfLifeMenu:
         """
         Start the game from settings.
         """
-        self.dGOL.startGameFromSettings(
-            settings.DEFAULT_ROWS, 
-            settings.DEFAULT_COLS,
-            settings.DEFAULT_INFINITY_PLAY_AREA, 
-            settings.DEFAULT_CELL_SIZE, 
-            settings.DEFAULT_CELL_MARGIN, 
-            settings.DEFAULT_CELL_BORDER_RADIUS, 
-            settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, 
-            self.menuMain)
+        rows = None
+        cols = None
+        infinityPlayArea = None
+        cellSize = None
+        cellMargin = None
+        cellBorderRadius = None
+        cellHoverBorderWidth = None
+        
+        data = self.menuPlay.get_input_data()
+        for key in data:
+            print(key, data[key])
+            if key == "rows":
+                if int(data[key]) > 0:
+                    rows = int(data[key])
+            elif key == "cols":
+                if int(data[key]) > 0:
+                    cols = int(data[key])
+            elif key == "infinityPlayArea":
+                infinityPlayArea = bool(data[key])
+            elif key == "cellSize":
+                if int(data[key]) > 0:
+                    cellSize = int(data[key])
+            elif key == "cellMargin":
+                cellMargin = int(data[key])
+            elif key == "cellBorderRadius":
+                cellBorderRadius = int(data[key])
+            elif key == "cellHoverBorderWidth":
+                cellHoverBorderWidth = int(data[key])
+
+        # Check if all values are set (if not set menans that the settings are not valid and the game should not be started)
+        if rows is not None and cols is not None and infinityPlayArea is not None and cellSize is not None and cellMargin is not None and cellBorderRadius is not None and cellHoverBorderWidth is not None:
+            self.dGOL.startGameFromSettings(rows, cols, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, self.menuMain)
 
 
     def _startGameFromFile(self):
         """
         Start the game from a file.
         """
-        self.dGOL.startGameFromFile(
-            settings.SAVE_FILE, 
-            True,#settings.DEFAULT_INFINITY_PLAY_AREA, 
-            settings.DEFAULT_CELL_SIZE, 
-            settings.DEFAULT_CELL_MARGIN, 
-            settings.DEFAULT_CELL_BORDER_RADIUS, 
-            5, #settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, 
-            self.menuMain)
+        saveFile = None
+        infinityPlayArea = None
+        cellSize = None
+        cellMargin = None
+        cellBorderRadius = None
+        cellHoverBorderWidth = None
+
+        data = self.menuPlay.get_input_data()
+        for key in data:
+            if key == "saveFile":
+                saveFile = "Pygame/Saves/" + data[key][0][0]
+            elif key == "infinityPlayArea":
+                infinityPlayArea = bool(data[key])
+            elif key == "cellSize":
+                if int(data[key]) > 0:
+                    cellSize = int(data[key])
+            elif key == "cellMargin":
+                cellMargin = int(data[key])
+            elif key == "cellBorderRadius":
+                cellBorderRadius = int(data[key])
+            elif key == "cellHoverBorderWidth":
+                cellHoverBorderWidth = int(data[key])
+
+        # Check if all values are set (if not set menans that the settings are not valid and the game should not be started)
+        if saveFile is not None and infinityPlayArea is not None and cellSize is not None and cellMargin is not None and cellBorderRadius is not None and cellHoverBorderWidth is not None:
+            self.dGOL.startGameFromFile(saveFile, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, self.menuMain)
 
 
 if __name__ == '__main__':

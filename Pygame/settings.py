@@ -103,10 +103,4 @@ COLOR_PLAY_SURFACE_BACKGROUND = (1, 0, 0)
 # IMPORTANT: If not None, this color needs to be different from other Cell colors
 COLOR_PLAY_SURFACE_COLORKEY = COLOR_PLAY_SURFACE_BACKGROUND # COLOR_PLAYSURFACE_BACKGROUND | None
 
-SAVE_FILE = [
-    "Saves/3x3.npy",
-    "Saves/5x5test.npy",
-    "Saves/10x10Glider.npy",
-    "Saves/64x64.npy",
-    "Saves/test.npy"
-    ][1]
+DIR_SAVE = "./Pygame/Saves/"
