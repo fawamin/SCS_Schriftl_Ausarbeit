@@ -172,7 +172,7 @@ class DisplayGameOfLife:
 
         self._playMenu.add.vertical_margin(15 + daySlider.get_height())
         # create draw Surface
-        self._drawSurface = pygame.Surface(size = (self._rows * self._totalCellSize, self._cols * self._totalCellSize))
+        self._drawSurface = pygame.Surface(size = (self._cols * self._totalCellSize, self._rows * self._totalCellSize))
         self._drawSurface.fill(settings.COLOR_PLAY_SURFACE_BACKGROUND)
         self._drawSurface.set_colorkey(settings.COLOR_PLAY_SURFACE_COLORKEY)
 
