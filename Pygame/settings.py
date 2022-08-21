@@ -41,15 +41,14 @@ DEFAULT_CELL_MARGIN = 2
 DEFAULT_CELL_BORDER_RADIUS = 2
 DEFAULT_CELL_HOVER_BORDER_WIDTH = 2
 DAY_CYCEL_SPEEDS = [
-    {"description": "Stop", "millis": 0},
-    {"description": "5 s/d", "millis": 5000},
-    {"description": "4 s/d", "millis": 4000},
-    {"description": "3 s/d", "millis": 3000},
-    {"description": "2 s/d", "millis": 2000},
-    {"description": "1 d/s", "millis": 1000},
-    {"description": "2 d/s", "millis": 500},
-    {"description": "4 d/s", "millis": 250},
-    {"description": "8 d/s", "millis": 125},
+    ("5 s/d", 5000),
+    ("4 s/d", 4000),
+    ("3 s/d", 3000),
+    ("2 s/d", 2000),
+    ("1 d/s", 1000),
+    ("2 d/s", 500),
+    ("4 d/s", 250),
+    ("8 d/s", 125),
 ]
 
 COLOR_CELL = {

@@ -26,6 +26,8 @@ class DisplayGameOfLife:
     _gameStarted: bool
     _valuesSet: bool
     _dayCycelEvent: pygame.event.Event
+    _dayCycelPlay : bool
+    _dayCycelSpeed: int
     _gol: GameOfLife
     _playMenu: pygame_menu.Menu
     _drawSurface: pygame.Surface
@@ -140,7 +142,6 @@ class DisplayGameOfLife:
             self._screen.get_width(),
             self._screen.get_height(),
             False,
-            mouse_motion_selection = True,
             theme = pygame_menu.themes.THEME_DARK.copy(),
             columns = 3,
             rows = [1, 6, 2],
@@ -150,19 +151,24 @@ class DisplayGameOfLife:
 
 
         self._playMenu.add.vertical_margin(15)
-        #Slider for Cyclespeed
-        daySlider = self._playMenu.add.range_slider(
-            "Day Cycle Speed", 
-            0, 
-            list(range(len(settings.DAY_CYCEL_SPEEDS))),
-            slider_text_value_enabled = True,
-            value_format = lambda key: settings.DAY_CYCEL_SPEEDS[key]["description"],
-            width = 45 * len(settings.DAY_CYCEL_SPEEDS),
-            onchange = self._onDayCycleSpeedChange,
-            align = pygame_menu.locals.ALIGN_LEFT
-        )
-        #Set Speed to 0
-        self._onDayCycleSpeedChange(0)
+        self._playMenu.add.toggle_switch("Day Cycle:", toggleswitch_id = "dayCyclePause", state_text = ("Pause", "Play"), onchange = self._onDayCyclePause, align = pygame_menu.locals.ALIGN_LEFT)
+        if len(settings.DAY_CYCEL_SPEEDS) > 0:
+            self._dayCycelSpeed = settings.DAY_CYCEL_SPEEDS[0][1]
+            self._playMenu.add.dropselect(
+                "Day Cycle Speed:", 
+                settings.DAY_CYCEL_SPEEDS, 
+                0, 
+                onchange = self._onDayCycleSpeedChange, 
+                placeholder_add_to_selection_box = False, 
+                selection_box_width = 150, 
+                selection_box_height = 4, 
+                align = pygame_menu.locals.ALIGN_LEFT
+            )
+        else:
+            self._dayCycelSpeed = 0
+            self._playMenu.add.label("No Day Cycle Speeds set", align = pygame_menu.locals.ALIGN_LEFT)
+        # pause Game on new start
+        self._onDayCyclePause(True)
 
         self._playMenu.add.vertical_fill()
         self._playMenu.add.button("Return to Main Menu", self.exit, align = pygame_menu.locals.ALIGN_LEFT)
@@ -170,7 +176,6 @@ class DisplayGameOfLife:
         self._playMenu.add.vertical_margin(10)
         
 
-        self._playMenu.add.vertical_margin(15 + daySlider.get_height())
         # create draw Surface
         self._drawSurface = pygame.Surface(size = (self._cols * self._totalCellSize, self._rows * self._totalCellSize))
         self._drawSurface.fill(settings.COLOR_PLAY_SURFACE_BACKGROUND)
@@ -265,14 +270,29 @@ class DisplayGameOfLife:
         # set play menu created to false
         self._valuesSet = False
 
+
+    # on day cycle pause
+    def _onDayCyclePause(self,  play: bool):
+        speed = 0
+        if play:
+            speed = self._dayCycelSpeed
+        pygame.time.set_timer(self._dayCycelEvent.type, speed)
+        self._dayCycelPlay = play
+
         
     # on day cycle speed change
-    def _onDayCycleSpeedChange(self, key: int):
-        # check if millis is in keys of allowed values
-        if key > len(settings.DAY_CYCEL_SPEEDS):
-            raise Exception("Millis is not in list of allowed values")
-        # set time for day cycle event
-        pygame.time.set_timer(self._dayCycelEvent.type, settings.DAY_CYCEL_SPEEDS[key]["millis"])
+    def _onDayCycleSpeedChange(self, selectedItemIndex, *kwargs):
+        # check if game is not started
+        if not self._gameStarted:
+            raise Exception("Game is not started")
+        # check if values are not set
+        if not self._valuesSet:
+            raise Exception("Values are not set")
+        speed = selectedItemIndex[0][1]
+        # set time for day cycle event if day cycle is play
+        if self._dayCycelPlay:
+            pygame.time.set_timer(self._dayCycelEvent.type, speed)
+        self._dayCycelSpeed = speed
         
 
     # render play surface
