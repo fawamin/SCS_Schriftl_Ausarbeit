@@ -168,7 +168,7 @@ class DisplayGameOfLife:
             self._dayCycelSpeed = 0
             self._playMenu.add.label("No Day Cycle Speeds set", align = pygame_menu.locals.ALIGN_LEFT)
         # pause Game on new start
-        self._onDayCyclePause(True)
+        self._onDayCyclePause(False)
 
         self._playMenu.add.vertical_fill()
         self._playMenu.add.button("Return to Main Menu", self.exit, align = pygame_menu.locals.ALIGN_LEFT)
