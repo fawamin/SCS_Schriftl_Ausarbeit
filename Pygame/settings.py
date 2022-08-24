@@ -12,8 +12,6 @@ WINDOW_SIZE = {
     "custom": (1600, 900),
 }["custom"]
 
-WINDOW_WIDTH, WINDOW_HEIGHT = WINDOW_SIZE
-
 MIN_WINDOW_SIZE = (640, 360)
 
 FPS = 60
@@ -52,6 +50,7 @@ DAY_CYCEL_SPEEDS = {
     "8 d/s": 125,
 }
 
+# Colour value for Cell Generations
 COLOR_CELL = {
     0: {"STATE": "DEAD", "MIN_DAYS": 0, "COLOR": (0, 0, 0)},
     1: {"STATE": "GEN_1", "MIN_DAYS": 1, "COLOR": (255, 255, 255)},
@@ -105,6 +104,7 @@ COLOR_PLAY_SURFACE_COLORKEY = COLOR_PLAY_SURFACE_BACKGROUND # COLOR_PLAYSURFACE_
 
 DIR_SAVE = "./Pygame/Saves/"
 
+#Presaved Patterns
 PATTERNS = {
     # "description": list (rows)[list (columns)[cell state (int | None), < 0 | None = ignord, 0 kill cell, > 0 = born cell>]]
     "block": [[1, 1], [1, 1]],
