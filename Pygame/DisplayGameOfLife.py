@@ -243,25 +243,33 @@ class DisplayGameOfLife:
         # check if instance is enabled#
         if not self.is_enabled():
             raise Exception("Instance is not enabled")
-        
+
+        ctrlPressd = True if pygame.key.get_mods() & pygame.KMOD_CTRL else False
+        playSurfaceChanged = False
+
         for event in events:
             if event.type == self._dayCycelEvent.type:
                 # cicle day and render play surface
                 self._gol.cycleDay()
-                self._renderPlaySurface()
+                playSurfaceChanged = True
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     #Pattern active or not
                     if self._patternActive:
-                        self._setPattern(self._currentPattern)
+                        self._setPattern(self._currentPattern, ctrlPressd)
                     else:
                         self._toggleCell()
-                    self._renderPlaySurface()
+                    playSurfaceChanged = True
+                elif event.button == 3:
+                    # set pattern ignore cells to kill and invert patter
+                    self._setPattern(self._currentPattern, ctrlPressd, True)
+                    playSurfaceChanged = True
 
-        
+        if playSurfaceChanged:
+            self._renderPlaySurface()
 
         self._drawSurface.blit(self.playSurface, (0, 0))
-        self._previewPattern(self._currentPattern)
+        self._previewPattern(self._currentPattern, ctrlPressd)
         self._playWidget.force_menu_surface_update()
 
         self._playMenu.update(events)
@@ -428,7 +436,7 @@ class DisplayGameOfLife:
 
 
     # preview pattern
-    def _previewPattern(self, pattern: list[list[int | None]]):
+    def _previewPattern(self, pattern: list[list[int | None]], ignoreCellsToKill: bool = False):
         # check if game is not started
         if not self._gameStarted:
             raise Exception("Game is not started")
@@ -436,12 +444,12 @@ class DisplayGameOfLife:
         # check if values are not set
         if not self._valuesSet:
             raise Exception("Values are not set")
-        
+
         maxPatternHight = len(pattern)
         maxPatternWidth = 0
         for i in range(maxPatternHight):
             maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
-        
+
         # check if pattern is valid
         if maxPatternWidth > self._cols or maxPatternHight > self._rows:
             raise Exception("Pattern is too big for play area")
@@ -471,6 +479,12 @@ class DisplayGameOfLife:
                 for j in range(len(pattern[i])):
                     if pattern[i][j] == None or pattern[i][j] < 0:
                         continue
+                    elif pattern[i][j] == 0:
+                        if ignoreCellsToKill:
+                            continue
+                        borderColor = (255, 0, 0, 255)
+                    else: # > 0
+                        borderColor = (0, 255, 0, 255)
 
                     col = index[0] + j
                     if self._infinityPlayArea:
@@ -479,11 +493,6 @@ class DisplayGameOfLife:
                     hoverX = col * self._totalCellSize + self._cellHoverMargin
                     spaceX = col * self._totalCellSize + self._cellSpaceMargin
 
-                    if pattern[i][j] == 0:
-                        borderColor = (255, 0, 0, 255)
-                    else: # > 0
-                        borderColor = (0, 255, 0, 255)
-                    
                     pygame.draw.rect(
                         previewSurface,
                         borderColor,
@@ -506,7 +515,7 @@ class DisplayGameOfLife:
 
 
     # set pattern
-    def _setPattern(self, pattern: list[list[int | None]]):
+    def _setPattern(self, pattern: list[list[int | None]], ignoreCellsToKill: bool = False, invert: bool = False):
         # check if game is not started
         if not self._gameStarted:
             raise Exception("Game is not started")
@@ -542,12 +551,21 @@ class DisplayGameOfLife:
                 for j in range(len(pattern[i])):
                     if pattern[i][j] == None or pattern[i][j] < 0:
                         continue
+                    elif pattern[i][j] == 0:
+                        if ignoreCellsToKill:
+                            continue
+                        killCell = True
+                    else: # > 0
+                        killCell = False
+
+                    if invert:
+                        killCell = not killCell
 
                     col = index[0] + j
                     if self._infinityPlayArea:
                         col = col % self._cols
                         
-                    if pattern[i][j] == 0:
+                    if killCell:
                         self._gol.killCell(row, col)
                     else: # > 0
                         self._gol.birthCell(row, col)
