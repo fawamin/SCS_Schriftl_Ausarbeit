@@ -251,8 +251,11 @@ class DisplayGameOfLife:
                 self._renderPlaySurface()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    # set pattern
-                    self._setPattern(self._currentPattern)
+                    #Pattern active or not
+                    if self._patternActive:
+                        self._setPattern(self._currentPattern)
+                    else:
+                        self._toggleCell()
                     self._renderPlaySurface()
 
         
@@ -263,7 +266,6 @@ class DisplayGameOfLife:
 
         self._playMenu.update(events)
 
-    
     # draw
     def draw(self):
         # check if instance is enabled
@@ -548,4 +550,18 @@ class DisplayGameOfLife:
                     if pattern[i][j] == 0:
                         self._gol.killCell(row, col)
                     else: # > 0
-                        self._gol.bornCell(row, col)
+                        self._gol.birthCell(row, col)
+
+    #Toggles the Current Cell between alive and dead
+    def _toggleCell(self):
+        # check if game is not started
+        if not self._gameStarted:
+            raise Exception("Game is not started")
+
+        # check if values are not set
+        if not self._valuesSet:
+            raise Exception("Values are not set")
+        
+        Positions = self._calculateIndex()
+        if Positions is not None:
+            self._gol.toggleCell(Positions[1], Positions[0]) 
