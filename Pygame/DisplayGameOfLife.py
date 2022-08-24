@@ -154,12 +154,13 @@ class DisplayGameOfLife:
 
 
         self._playMenu.add.vertical_margin(15)
-        self._playMenu.add.toggle_switch("Day Cycle:", toggleswitch_id = "dayCyclePause", state_text = ("Pause", "Play"), onchange = self._onDayCyclePause, align = pygame_menu.locals.ALIGN_LEFT)
-        if len(settings.DAY_CYCEL_SPEEDS) > 0:
-            self._dayCycelSpeed = settings.DAY_CYCEL_SPEEDS[0][1]
+        self._playMenu.add.toggle_switch("Day Cycle:", state_text = ("Pause", "Play"), onchange = self._onDayCyclePause, align = pygame_menu.locals.ALIGN_LEFT)
+        dayCycleSpeeds = [(speed, settings.DAY_CYCEL_SPEEDS[speed]) for speed in settings.DAY_CYCEL_SPEEDS]
+        if len(dayCycleSpeeds) > 0:
+            self._dayCycelSpeed = dayCycleSpeeds[0][1]
             self._playMenu.add.dropselect(
                 "Day Cycle Speed:", 
-                settings.DAY_CYCEL_SPEEDS, 
+                dayCycleSpeeds, 
                 0, 
                 onchange = self._onDayCycleSpeedChange, 
                 placeholder_add_to_selection_box = False, 

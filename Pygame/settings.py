@@ -40,16 +40,17 @@ DEFAULT_CELL_SIZE = 15
 DEFAULT_CELL_MARGIN = 2
 DEFAULT_CELL_BORDER_RADIUS = 2
 DEFAULT_CELL_HOVER_BORDER_WIDTH = 2
-DAY_CYCEL_SPEEDS = [
-    ("5 s/d", 5000),
-    ("4 s/d", 4000),
-    ("3 s/d", 3000),
-    ("2 s/d", 2000),
-    ("1 d/s", 1000),
-    ("2 d/s", 500),
-    ("4 d/s", 250),
-    ("8 d/s", 125),
-]
+DAY_CYCEL_SPEEDS = {
+    # "description": milliseconds between each day
+    "5 s/d": 5000,
+    "4 s/d": 4000,
+    "3 s/d": 3000,
+    "2 s/d": 2000,
+    "1 d/s": 1000,
+    "2 d/s": 500,
+    "4 d/s": 250,
+    "8 d/s": 125,
+}
 
 COLOR_CELL = {
     0: {"STATE": "DEAD", "MIN_DAYS": 0, "COLOR": (0, 0, 0)},
