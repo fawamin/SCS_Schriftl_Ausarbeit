@@ -28,6 +28,9 @@ class DisplayGameOfLife:
     _dayCycelEvent: pygame.event.Event
     _dayCycelPlay : bool
     _dayCycelSpeed: int
+    _patternActive: bool
+    _selectedPattern: list[list[int | None]]
+    _currentPattern: list[list[int | None]]
     _gol: GameOfLife
     _playMenu: pygame_menu.Menu
     _drawSurface: pygame.Surface
@@ -144,7 +147,7 @@ class DisplayGameOfLife:
             False,
             theme = pygame_menu.themes.THEME_DARK.copy(),
             columns = 3,
-            rows = [1, 6, 2],
+            rows = [1, 8, 2],
         )
         self._playMenu._disable_widget_update_mousepos_mouseselection = True
         self._playMenu.add.horizontal_margin(10)
@@ -169,6 +172,39 @@ class DisplayGameOfLife:
             self._playMenu.add.label("No Day Cycle Speeds set", align = pygame_menu.locals.ALIGN_LEFT)
         # pause Game on new start
         self._onDayCyclePause(False)
+
+        self._playMenu.add.toggle_switch("Selection Type:", state_text = ("singel", "pattern"), onchange = self._onSelectionTypeChange, align = pygame_menu.locals.ALIGN_LEFT)
+        patterns =  []
+        for pattern in settings.PATTERNS:
+            maxPatternHight = len(pattern)
+            if maxPatternHight > self._rows:
+                print("1", settings.PATTERNS[pattern])
+                continue
+            maxPatternWidth = 0
+            for i in range(maxPatternHight):
+                maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
+
+            if maxPatternWidth > self._cols:
+                print("2", settings.PATTERNS[pattern])
+                continue
+            patterns.append((pattern, settings.PATTERNS[pattern]))
+        if len(patterns) > 0:
+            self._selectedPattern = patterns[0][1]
+            self._playMenu.add.dropselect(
+                "Pattern:", 
+                patterns, 
+                0, 
+                onchange = self._onPatternChange, 
+                placeholder_add_to_selection_box = False, 
+                selection_box_width = 150, 
+                selection_box_height = 4, 
+                align = pygame_menu.locals.ALIGN_LEFT
+            )
+        else:
+            self._selectedPattern = [[1]]
+            self._playMenu.add.label("No Patterns big enough for selected size", align = pygame_menu.locals.ALIGN_LEFT)
+        # reset pattern Type on new start
+        self._onSelectionTypeChange(False)
 
         self._playMenu.add.vertical_fill()
         self._playMenu.add.button("Return to Main Menu", self.exit, align = pygame_menu.locals.ALIGN_LEFT)
@@ -203,9 +239,6 @@ class DisplayGameOfLife:
 
     # update events
     def update(self, events: list[pygame.event.Event]):
-
-        pattern = [[1, 1], [1, 1]]
-
         # check if instance is enabled#
         if not self.is_enabled():
             raise Exception("Instance is not enabled")
@@ -218,13 +251,13 @@ class DisplayGameOfLife:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     # set pattern
-                    self._setPattern(pattern)
+                    self._setPattern(self._currentPattern)
                     self._renderPlaySurface()
 
         
 
         self._drawSurface.blit(self.playSurface, (0, 0))
-        self._previewPattern(pattern)
+        self._previewPattern(self._currentPattern)
         self._playWidget.force_menu_surface_update()
 
         self._playMenu.update(events)
@@ -293,7 +326,23 @@ class DisplayGameOfLife:
         if self._dayCycelPlay:
             pygame.time.set_timer(self._dayCycelEvent.type, speed)
         self._dayCycelSpeed = speed
-        
+
+
+    # on selection type change
+    def _onSelectionTypeChange(self, patternsActive: bool):
+        if patternsActive:
+            self._currentPattern = self._selectedPattern
+        else:
+            self._currentPattern = [[1]]
+        self._patternActive = patternsActive
+
+
+    # on pattern change
+    def _onPatternChange(self, selectedItemIndex, *kwargs):
+        self._selectedPattern = selectedItemIndex[0][1]
+        if self._patternActive:
+            self._currentPattern = self._selectedPattern
+
 
     # render play surface
     def _renderPlaySurface(self):
