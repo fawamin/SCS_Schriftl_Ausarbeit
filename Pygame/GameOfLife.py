@@ -62,7 +62,7 @@ class GameOfLife:
         rows, cols = array.shape
         return cls(array, rows, cols, infinityPlayArea)
 
-        
+    #Prints the GameOfLife Playboard to the Console
     def printToConsole(self):
         """
         Prints the current state of the GameOfLife to the console.
@@ -73,7 +73,7 @@ class GameOfLife:
             print()
 
 
-    # Speichert Aktuellen Zustand in .npy Datei
+    # Saves the current Playboard to a .npy File
     def saveFile(self, saveFileName: str | PathLike[str]):
         """
         Saves the current state of the GameOfLife to a file.
@@ -95,8 +95,8 @@ class GameOfLife:
         return self.array.copy()
 
 
-    # borns a new cell at the given position
-    def bornCell(self, x: int, y: int):
+    # birth a new cell at the given position
+    def birthCell(self, x: int, y: int):
         """
         Borns a new cell at the given position.
         :param x: The x coordinate of the cell to born.
@@ -108,7 +108,7 @@ class GameOfLife:
             self.array[x, y] =  1
 
 
-    # kills a cell at the given position
+    # kills the cell at the given position
     def killCell(self, x: int, y: int):
         """
         Kills a cell at the given position.
@@ -120,7 +120,7 @@ class GameOfLife:
         self.array[x, y] = 0
 
 
-    # toggels the cell at the given position
+    # toggles the cell at the given position
     def toggleCell(self, x: int, y: int):
         """
         Toggles live stat of a cell at the given position.
@@ -132,7 +132,7 @@ class GameOfLife:
         self.array[x, y] = 1 if self.array[x, y] == 0 else 0
 
 
-    # Get the number of live neighbors of the current cell
+    # Get the number of living neighbors of the current cell
     def getLiveNeighbors(self, x: int, y: int):
         """
         Returns the number of live neighbors of the current cell.
