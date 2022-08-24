@@ -64,8 +64,8 @@ class DisplayGameOfLifeMenu:
         self.menuPlay.add.text_input("Cell border radius (px): ", settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellBorderRadius")
         self.menuPlay.add.text_input("Cell hover border width (px): ", settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellHoverBorderWidth")
 
-        self.menuPlay.add.text_input("Rows: ", settings.DEFAULT_ROWS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "rows")
         self.menuPlay.add.text_input("Columns: ", settings.DEFAULT_COLS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "cols")
+        self.menuPlay.add.text_input("Rows: ", settings.DEFAULT_ROWS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "rows")
         self.menuPlay.add.button('Start with Setting', self._startGameFromSttings)
 
         self.menuPlay.add.vertical_margin(vMargin)
@@ -102,7 +102,7 @@ class DisplayGameOfLifeMenu:
         menuAbout.add.vertical_margin(30)
         menuAbout.add.button('Return to menu', pygame_menu.events.BACK)
 
-    
+
         # -------------------------------------------------------------------------
         # Create menus: Main
         # -------------------------------------------------------------------------
@@ -163,22 +163,22 @@ class DisplayGameOfLifeMenu:
         """
         Start the game from settings.
         """
-        rows = None
         cols = None
+        rows = None
         infinityPlayArea = None
         cellSize = None
         cellMargin = None
         cellBorderRadius = None
         cellHoverBorderWidth = None
-        
+
         data = self.menuPlay.get_input_data()
         for key in data:
-            if key == "rows":
-                if int(data[key]) > 0:
-                    rows = int(data[key])
-            elif key == "cols":
+            if key == "cols":
                 if int(data[key]) > 0:
                     cols = int(data[key])
+            elif key == "rows":
+                if int(data[key]) > 0:
+                    rows = int(data[key])
             elif key == "infinityPlayArea":
                 infinityPlayArea = bool(data[key])
             elif key == "cellSize":
@@ -192,8 +192,8 @@ class DisplayGameOfLifeMenu:
                 cellHoverBorderWidth = int(data[key])
 
         # Check if all values are set (if not set menans that the settings are not valid and the game should not be started)
-        if rows is not None and cols is not None and infinityPlayArea is not None and cellSize is not None and cellMargin is not None and cellBorderRadius is not None and cellHoverBorderWidth is not None:
-            self.dGOL.startGameFromSettings(rows, cols, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, self.menuMain)
+        if cols is not None and rows is not None and infinityPlayArea is not None and cellSize is not None and cellMargin is not None and cellBorderRadius is not None and cellHoverBorderWidth is not None:
+            self.dGOL.startGameFromSettings(cols, rows, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, self.menuMain)
 
 
     def _startGameFromFile(self):

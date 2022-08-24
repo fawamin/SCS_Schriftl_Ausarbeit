@@ -9,41 +9,41 @@ class GameOfLife:
 
     # Play area
     array: numpy.ndarray
-    rows: int
     cols: int
+    rows: int
     infinityPlayArea: bool
 
 
     # Create new instance of GameOfLife with the given settings
-    def __init__(self, array: numpy.ndarray, rows: int, cols: int, infinityPlayArea: bool = False):
+    def __init__(self, array: numpy.ndarray, cols: int, rows: int, infinityPlayArea: bool = False):
         """
         Initializes a new GameOfLife instance with the given settings.
         :param array: The play area of the GameOfLife.
-        :param rows: The number of rows in the play area.
         :param cols: The number of columns in the play area.
+        :param rows: The number of rows in the play area.
         :param infinityPlayArea: If true, the play area borders are connected.
         """
-        if rows < 1 or cols < 1:
+        if cols < 1 or rows < 1:
             raise ValueError("Invalid row or column count (must be greater than 0)")
-        if array.shape != (rows, cols):
+        if array.shape != (cols, rows):
             raise ValueError("Invalid array shape (must be (rows, cols))")
         self.array = array
-        self.rows = rows
         self.cols = cols
+        self.rows = rows
         self.infinityPlayArea = infinityPlayArea
 
 
     # Creates a new GameOfLife instance with the given settings
     @classmethod
-    def fromSettings(cls, rows: int, cols: int, infinityPlayArea: bool = False):
+    def fromSettings(cls, cols: int, rows: int, infinityPlayArea: bool = False):
         """
         Creates a new GameOfLife instance with the given settings.
-        :param rows: The number of rows in the play area.
         :param cols: The number of columns in the play area.
+        :param rows: The number of rows in the play area.
         :param infinityPlayArea: If true, the play area borders are connected.
         :return: The new GameOfLife instance.
         """
-        return cls(numpy.zeros((rows, cols)), rows, cols, infinityPlayArea)
+        return cls(numpy.zeros((cols, rows)), cols, rows, infinityPlayArea)
 
 
     # Creates a new GameOfLife Instance from loaded File
@@ -59,8 +59,8 @@ class GameOfLife:
             array: numpy.ndarray = numpy.load(loadFileName)
         except Exception as e:
             raise ValueError("Could not load file: \n" + str(e))
-        rows, cols = array.shape
-        return cls(array, rows, cols, infinityPlayArea)
+        cols, rows = array.shape
+        return cls(array, cols, rows, infinityPlayArea)
 
     #Prints the GameOfLife Playboard to the Console
     def printToConsole(self):
@@ -69,7 +69,7 @@ class GameOfLife:
         """
         for row in range(self.rows):
             for col in range(self.cols):
-                print(self.array[row, col], end = " ")
+                print(self.array[col, row], end = " ")
             print()
 
 
@@ -102,8 +102,8 @@ class GameOfLife:
         :param x: The x coordinate of the cell to born.
         :param y: The y coordinate of the cell to born.
         """
-        if not 0 <= x < self.rows or not 0 <= y < self.cols:
-            raise ValueError("Invalid cell position (0 <= x < {sef.rows}, 0 <= y < {sef.cols})")
+        if not 0 <= x < self.cols or not 0 <= y < self.rows:
+            raise ValueError("Invalid cell position (0 <= x < {sef.cols}, 0 <= y < {self.rows})")
         if self.array[x, y] == 0:
             self.array[x, y] =  1
 
@@ -115,8 +115,8 @@ class GameOfLife:
         :param x: The x coordinate of the cell to kill.
         :param y: The y coordinate of the cell to kill.
         """
-        if not 0 <= x < self.rows or not 0 <= y < self.cols:
-            raise ValueError("Invalid cell position (0 <= x < {sef.rows}, 0 <= y < {sef.cols})")
+        if not 0 <= x < self.cols or not 0 <= y < self.rows:
+            raise ValueError("Invalid cell position (0 <= x < {sef.cols}, 0 <= y < {self.rows})")
         self.array[x, y] = 0
 
 
@@ -127,8 +127,8 @@ class GameOfLife:
         :param x: The x coordinate of the cell to toggle.
         :param y: The y coordinate of the cell to toggle.
         """
-        if not 0 <= x < self.rows or not 0 <= y < self.cols:
-            raise ValueError("Invalid cell position (0 <= x < {sef.rows}, 0 <= y < {sef.cols})")
+        if not 0 <= x < self.cols or not 0 <= y < self.rows:
+            raise ValueError("Invalid cell position (0 <= x < {sef.cols}, 0 <= y < {self.rows})")
         self.array[x, y] = 1 if self.array[x, y] == 0 else 0
 
 
@@ -140,19 +140,19 @@ class GameOfLife:
         :param y: The y coordinate of the cell to get the live neighbors of.
         :return: The number of live neighbors of the current cell.
         """
-        if not 0 <= x < self.rows or not 0 <= y < self.cols:
-            raise ValueError("Invalid cell position (0 <= x < {sef.rows}, 0 <= y < {sef.cols})")
+        if not 0 <= x < self.cols or not 0 <= y < self.rows:
+            raise ValueError("Invalid cell position (0 <= x < {sef.cols}, 0 <= y < {self.rows})")
         # count the number of live neighbors
         liveNeighbors = 0
         if self.infinityPlayArea:
             for i in [-1, 0, 1]:
                 for j in [-1, 0, 1]:
-                    if self.array[(x + i) % self.rows, (y + j) % self.cols] >= 1:
+                    if self.array[(x + j) % self.cols, (y + i) % self.rows] >= 1:
                         liveNeighbors += 1
         else:
-            for i in range(max(0, x - 1), min(self.rows, x + 2)):
-                for j in range(max(0, y - 1), min(self.cols, y + 2)):
-                    if self.array[i, j] >= 1:
+            for i in range(max(0, y - 1), min(self.rows, y + 2)):
+                for j in range(max(0, x - 1), min(self.cols, x + 2)):
+                    if self.array[j, i] >= 1:
                         liveNeighbors += 1
 
         if self.array[x, y] >= 1:
@@ -174,19 +174,19 @@ class GameOfLife:
         for row in range(self.rows):
             for col in range(self.cols):
                 # Get the number of live neighbors of the current cell
-                liveNeighbors = self.getLiveNeighbors(row, col)
-                
+                liveNeighbors = self.getLiveNeighbors(col, row)
+
                 # Determine the new state of the current cell
-                if self.array[row, col] >= 1:
+                if self.array[col, row] >= 1:
                     if liveNeighbors == 2 or liveNeighbors == 3:
-                        dayCount = self.array[row, col]
+                        dayCount = self.array[col, row]
                         if dayCount < MAX_DAY_COUNT:
                             dayCount += 1
-                        newDay[row, col] = dayCount
-                    # else: newDay[row, col] = 0 no cange already set (default for newDay)
+                        newDay[col, row] = dayCount
+                    # else: newDay[col, row] = 0 no cange already set (default for newDay)
                 else:
                     if liveNeighbors == 3:
-                        newDay[row, col] = 1
-                    # else: newDay[row, col] = 0 no cange already set (default for newDay)
+                        newDay[col, row] = 1
+                    # else: newDay[col, row] = 0 no cange already set (default for newDay)
         # Update the current state of the GameOfLife
         self.array = newDay

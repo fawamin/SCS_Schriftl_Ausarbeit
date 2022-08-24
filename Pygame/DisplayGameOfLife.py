@@ -14,8 +14,8 @@ class DisplayGameOfLife:
 
     # object variables
     _screen: pygame.Surface
-    _rows: int
     _cols: int
+    _rows: int
     _infinityPlayArea: bool
     _cellSize: int
     _cellMargin: int
@@ -51,7 +51,7 @@ class DisplayGameOfLife:
 
 
     # start new game
-    def startGameFromSettings(self, rows: int, cols: int, infinityPlayArea: bool, cellSize: int, cellMargin: int, cellBorderRadius: int, cellHoverBorderWidth: int,  menuMain: pygame_menu.Menu | None = None):
+    def startGameFromSettings(self, cols: int, rows: int, infinityPlayArea: bool, cellSize: int, cellMargin: int, cellBorderRadius: int, cellHoverBorderWidth: int,  menuMain: pygame_menu.Menu | None = None):
         # check if game is already started
         if self._gameStarted:
             raise Exception("Game is already started")
@@ -59,15 +59,15 @@ class DisplayGameOfLife:
         # set game started to true
         self._gameStarted = True
 
-        # check if rows and cols are valid
-        if rows < 1 or cols < 1:
-            raise ValueError("Invalid row or column count (must be greater than 0)")
+        # check if cols and rows are valid
+        if cols < 1 or rows < 1:
+            raise ValueError("Invalid column or row count (must be greater than 0)")
 
         # create new game of life
-        self._gol = GameOfLife.fromSettings(rows, cols, infinityPlayArea)
+        self._gol = GameOfLife.fromSettings(cols, rows, infinityPlayArea)
 
         # create play menu
-        self._startGame(rows, cols, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, menuMain)
+        self._startGame(cols, rows, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, menuMain)
 
 
     # start game from File
@@ -81,15 +81,15 @@ class DisplayGameOfLife:
 
         # create new game of life
         self._gol = GameOfLife.fromFile(fileName, infinityPlayArea)
-        # set rows and cols to size of loaded field
-        rows, cols = self._gol.getField().shape
+        # set cols and rows to size of loaded field
+        cols, rows = self._gol.getField().shape
 
         # create play menu
-        self._startGame(rows, cols, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, menuMain)
+        self._startGame(cols, rows, infinityPlayArea, cellSize, cellMargin, cellBorderRadius, cellHoverBorderWidth, menuMain)
 
-    
+
     # create play menu
-    def _startGame(self, rows: int, cols: int, infinityPlayArea: bool, cellSize: int, cellMargin: int, cellBorderRadius: int, cellHoverBorderWidth: int,  menuMain: pygame_menu.Menu | None = None):
+    def _startGame(self, cols:int, rows: int, infinityPlayArea: bool, cellSize: int, cellMargin: int, cellBorderRadius: int, cellHoverBorderWidth: int,  menuMain: pygame_menu.Menu | None = None):
         # check if game is already started
         if not self._gameStarted:
             raise Exception("Game is not started")
@@ -98,10 +98,10 @@ class DisplayGameOfLife:
         if self._valuesSet:
             raise Exception("Values are already set")
 
-        # check if rows and cols are valid
-        if rows < 1 or cols < 1:
-            raise ValueError("Invalid row or column count (must be greater than 0)")
-        
+        # check if cols and rows are valid
+        if cols < 1 or rows < 1:
+            raise ValueError("Invalid column or row count (must be greater than 0)")
+
         # check if cellSize is valid
         if cellSize < 1:
             raise ValueError("Invalid cell size (must be greater than 0)")
@@ -120,10 +120,10 @@ class DisplayGameOfLife:
 
         # set values set to true
         self._valuesSet = True
-        
+
         # set variables
-        self._rows = rows
         self._cols = cols
+        self._rows = rows
         self._infinityPlayArea = infinityPlayArea
         self._cellSize = cellSize
         self._cellMargin = cellMargin
@@ -159,13 +159,13 @@ class DisplayGameOfLife:
         if len(dayCycleSpeeds) > 0:
             self._dayCycelSpeed = dayCycleSpeeds[0][1]
             self._playMenu.add.dropselect(
-                "Day Cycle Speed:", 
-                dayCycleSpeeds, 
-                0, 
-                onchange = self._onDayCycleSpeedChange, 
-                placeholder_add_to_selection_box = False, 
-                selection_box_width = 150, 
-                selection_box_height = 4, 
+                "Day Cycle Speed:",
+                dayCycleSpeeds,
+                0,
+                onchange = self._onDayCycleSpeedChange,
+                placeholder_add_to_selection_box = False,
+                selection_box_width = 150,
+                selection_box_height = 4,
                 align = pygame_menu.locals.ALIGN_LEFT
             )
         else:
@@ -179,26 +179,24 @@ class DisplayGameOfLife:
         for pattern in settings.PATTERNS:
             maxPatternHight = len(pattern)
             if maxPatternHight > self._rows:
-                print("1", settings.PATTERNS[pattern])
                 continue
             maxPatternWidth = 0
             for i in range(maxPatternHight):
                 maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
-
             if maxPatternWidth > self._cols:
-                print("2", settings.PATTERNS[pattern])
                 continue
             patterns.append((pattern, settings.PATTERNS[pattern]))
+
         if len(patterns) > 0:
             self._selectedPattern = patterns[0][1]
             self._playMenu.add.dropselect(
-                "Pattern:", 
-                patterns, 
-                0, 
-                onchange = self._onPatternChange, 
-                placeholder_add_to_selection_box = False, 
-                selection_box_width = 150, 
-                selection_box_height = 4, 
+                "Pattern:",
+                patterns,
+                0,
+                onchange = self._onPatternChange,
+                placeholder_add_to_selection_box = False,
+                selection_box_width = 150,
+                selection_box_height = 4,
                 align = pygame_menu.locals.ALIGN_LEFT
             )
         else:
@@ -211,7 +209,7 @@ class DisplayGameOfLife:
         self._playMenu.add.button("Return to Main Menu", self.exit, align = pygame_menu.locals.ALIGN_LEFT)
         self._playMenu.add.button("Quit", pygame_menu.events.EXIT, align = pygame_menu.locals.ALIGN_LEFT)
         self._playMenu.add.vertical_margin(10)
-        
+
 
         # create draw Surface
         self._drawSurface = pygame.Surface(size = (self._cols * self._totalCellSize, self._rows * self._totalCellSize))
@@ -229,10 +227,10 @@ class DisplayGameOfLife:
             selection_effect = pygame_menu.widgets.NoneSelection(),
             align = pygame_menu.locals.ALIGN_LEFT
         )
-        
+
         self._renderPlaySurface()
-        
-    
+
+
     # is enabled
     def is_enabled(self):
         return self._gameStarted and self._valuesSet and self._playMenu.is_enabled()
@@ -244,6 +242,7 @@ class DisplayGameOfLife:
         if not self.is_enabled():
             raise Exception("Instance is not enabled")
 
+        # if crtl is pressed ignore cells to kill
         ctrlPressd = True if pygame.key.get_mods() & pygame.KMOD_CTRL else False
         playSurfaceChanged = False
 
@@ -261,7 +260,7 @@ class DisplayGameOfLife:
                         self._toggleCell()
                     playSurfaceChanged = True
                 elif event.button == 3:
-                    # set pattern ignore cells to kill and invert patter
+                    # set pattern invert patter
                     self._setPattern(self._currentPattern, ctrlPressd, True)
                     playSurfaceChanged = True
 
@@ -288,7 +287,7 @@ class DisplayGameOfLife:
     def resize(self, width: int, height: int):
         if self._gameStarted and self._valuesSet:
             self._playMenu.resize(width, height)
-    
+
 
     # exit
     def exit(self):
@@ -323,7 +322,7 @@ class DisplayGameOfLife:
         pygame.time.set_timer(self._dayCycelEvent.type, speed)
         self._dayCycelPlay = play
 
-        
+
     # on day cycle speed change
     def _onDayCycleSpeedChange(self, selectedItemIndex, *kwargs):
         # check if game is not started
@@ -379,7 +378,7 @@ class DisplayGameOfLife:
             for col in range(self._cols):
                 x = col * self._totalCellSize + self._cellMargin
                 # set cell colour
-                cellDay = field[row, col]
+                cellDay = field[col, row]
                 color = None
                 # get cell colour from highest minimum day
                 for gen in settings.COLOR_CELL:
@@ -459,9 +458,7 @@ class DisplayGameOfLife:
 
         if index is not None and not self._infinityPlayArea:
             # check if pattern is inside the play area
-            for i in range(maxPatternHight):
-                maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
-            if index[1] + maxPatternHight > self._rows or index[0] + maxPatternWidth > self._cols:
+            if index[0] + maxPatternWidth > self._cols or index[1] + maxPatternHight > self._rows:
                 index = None
 
         if index is not None:
@@ -523,12 +520,12 @@ class DisplayGameOfLife:
         # check if values are not set
         if not self._valuesSet:
             raise Exception("Values are not set")
-        
+
         maxPatternHight = len(pattern)
         maxPatternWidth = 0
         for i in range(maxPatternHight):
             maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
-        
+
         # check if pattern is valid
         if maxPatternWidth > self._cols or maxPatternHight > self._rows:
             raise Exception("Pattern is too big for play area")
@@ -538,9 +535,7 @@ class DisplayGameOfLife:
 
         if index is not None and not self._infinityPlayArea:
             # check if pattern is inside the play area
-            for i in range(maxPatternHight):
-                maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
-            if index[1] + maxPatternHight > self._rows or index[0] + maxPatternWidth > self._cols:
+            if index[0] + maxPatternWidth > self._cols or index[1] + maxPatternHight > self._rows:
                 index = None
 
         if index is not None:
@@ -564,11 +559,12 @@ class DisplayGameOfLife:
                     col = index[0] + j
                     if self._infinityPlayArea:
                         col = col % self._cols
-                        
+
                     if killCell:
-                        self._gol.killCell(row, col)
+                        self._gol.killCell(col, row)
                     else: # > 0
-                        self._gol.birthCell(row, col)
+                        self._gol.birthCell(col, row)
+
 
     #Toggles the Current Cell between alive and dead
     def _toggleCell(self):
@@ -579,7 +575,7 @@ class DisplayGameOfLife:
         # check if values are not set
         if not self._valuesSet:
             raise Exception("Values are not set")
-        
-        Positions = self._calculateIndex()
-        if Positions is not None:
-            self._gol.toggleCell(Positions[1], Positions[0]) 
+
+        index = self._calculateIndex()
+        if index is not None:
+            self._gol.toggleCell(index[0], index[1])
