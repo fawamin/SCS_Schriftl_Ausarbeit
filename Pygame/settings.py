@@ -9,8 +9,8 @@ WINDOW_SIZE = {
     "WQHD": (2560, 1440),
     "UWQHD": (3440, 1440),
     "UHD": (3840, 2160),
-    "coustum": (1600, 900),
-}["coustum"]
+    "custom": (1600, 900),
+}["custom"]
 
 WINDOW_WIDTH, WINDOW_HEIGHT = WINDOW_SIZE
 
@@ -26,7 +26,7 @@ CAPTION_MAIN_MENU = CAPTION_BASE + " - " + TITLE_MAIN_MENU
 CAPTION_ABOUT = CAPTION_BASE + " - " + TITLE_ABOUT
 
 ABOUT = [
-    f'Author: Steffen Hill',
+    f'Author: Steffen Hill, Fabian Waltermann',
     f'Pygame {pygame.__version__}',
     f'pygame-menu {pygame_menu.__version__}'
     ]
