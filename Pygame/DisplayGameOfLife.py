@@ -6,7 +6,7 @@ import pygame_menu.themes
 import pygame_menu.events
 import pygame_menu.locals
 
-from os import PathLike
+import os
 from GameOfLife import GameOfLife
 
 
@@ -71,7 +71,7 @@ class DisplayGameOfLife:
 
 
     # start game from File
-    def startGameFromFile(self, fileName: str | bytes | PathLike[str], infinityPlayArea: bool, cellSize: int, cellMargin: int, cellBorderRadius: int, cellHoverBorderWidth: int,  menuMain: pygame_menu.Menu | None = None):
+    def startGameFromFile(self, fileName: str | bytes | os.PathLike[str], infinityPlayArea: bool, cellSize: int, cellMargin: int, cellBorderRadius: int, cellHoverBorderWidth: int,  menuMain: pygame_menu.Menu | None = None):
         # check if game is already started
         if self._gameStarted:
             raise Exception("Game is already started")
@@ -147,7 +147,7 @@ class DisplayGameOfLife:
             False,
             theme = pygame_menu.themes.THEME_DARK.copy(),
             columns = 3,
-            rows = [1, 8, 2],
+            rows = [1, 11, 2],
         )
         self._playMenu._disable_widget_update_mousepos_mouseselection = True
         self._playMenu.add.horizontal_margin(10)
@@ -204,6 +204,16 @@ class DisplayGameOfLife:
             self._playMenu.add.label("No Patterns big enough for selected size", align = pygame_menu.locals.ALIGN_LEFT)
         # reset pattern Type on new start
         self._onSelectionTypeChange(False)
+
+        # add option to save playfield to file
+        if os.path.isdir(settings.DIR_SAVE):
+            self._playMenu.add.toggle_switch("allow overwrite:", state_text = ("No", "Yes"), align = pygame_menu.locals.ALIGN_LEFT, toggleswitch_id="overwrite")
+            self._playMenu.add.text_input("Save Playfild: ", align = pygame_menu.locals.ALIGN_LEFT, textinput_id="saveFileName", input_underline="_", input_underline_len=15)
+            self._playMenu.add.button("Save", self._onSavePlayfield, align = pygame_menu.locals.ALIGN_LEFT)
+        else:
+            self._playMenu.add.none_widget()
+            self._playMenu.add.label("Save directory not found", align = pygame_menu.locals.ALIGN_LEFT)
+            self._playMenu.add.none_widget()
 
         self._playMenu.add.vertical_fill()
         self._playMenu.add.button("Return to Main Menu", self.exit, align = pygame_menu.locals.ALIGN_LEFT)
@@ -352,6 +362,32 @@ class DisplayGameOfLife:
         self._selectedPattern = selectedItemIndex[0][1]
         if self._patternActive:
             self._currentPattern = self._selectedPattern
+
+
+    # save playfield
+    def _onSavePlayfield(self, *kwargs):
+        # check if game is not started
+        if not self._gameStarted:
+            raise Exception("Game is not started")
+        # check if values are not set
+        if not self._valuesSet:
+            raise Exception("Values are not set")
+        # check if save directory is not found
+        if not os.path.isdir(settings.DIR_SAVE):
+            return
+        # get save file name
+        saveFileName = self._playMenu.get_widget("saveFileName").get_value()
+        # check if save file name is not empty
+        if saveFileName == "":
+            return
+        saveFilePath = os.path.join(settings.DIR_SAVE, saveFileName)
+        if saveFilePath.endswith(".npy"):
+            saveFilePath = saveFilePath[:-4]
+        # check if save file name is not in use
+        if os.path.exists(saveFilePath + ".npy") and not self._playMenu.get_widget("overwrite").get_value():
+            return
+        # save playfield to file
+        self._gol.saveFile(saveFilePath)
 
 
     # render play surface
