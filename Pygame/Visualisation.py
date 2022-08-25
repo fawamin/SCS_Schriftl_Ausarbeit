@@ -168,7 +168,7 @@ class DisplayGameOfLifeMenu:
         self._menuPlay._disable_widget_update_mousepos_mouseselection = True
 
         vMargin = 30
-        self._menuPlay.add.button('Create new', self._menuFromSettings)
+        self._menuPlay.add.button('New Game', self._menuFromSettings)
         self._menuPlay.add.button('Load File', self._menuFromFile)
         self._menuPlay.add.vertical_margin(vMargin)
         self._menuPlay.add.button('Back', pygame_menu.events.BACK)
