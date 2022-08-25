@@ -174,7 +174,7 @@ class DisplayGameOfLife:
         # pause Game on new start
         self._onDayCyclePause(False)
 
-        self._playMenu.add.toggle_switch("Selection Type:", state_text = ("singel", "pattern"), onchange = self._onSelectionTypeChange, align = pygame_menu.locals.ALIGN_LEFT)
+        self._playMenu.add.toggle_switch("Selection Type:", state_text = ("single", "pattern"), onchange = self._onSelectionTypeChange, align = pygame_menu.locals.ALIGN_LEFT)
         patterns =  []
         for pattern in settings.PATTERNS:
             maxPatternHight = len(pattern)
@@ -208,8 +208,8 @@ class DisplayGameOfLife:
         # add option to save playfield to file
         if os.path.isdir(settings.DIR_SAVE):
             self._playMenu.add.toggle_switch("allow overwrite:", state_text = ("No", "Yes"), align = pygame_menu.locals.ALIGN_LEFT, toggleswitch_id="overwrite")
-            self._playMenu.add.text_input("Save Playfild: ", align = pygame_menu.locals.ALIGN_LEFT, textinput_id="saveFileName", input_underline="_", input_underline_len=15)
-            self._playMenu.add.button("Save", self._onSavePlayfield, align = pygame_menu.locals.ALIGN_LEFT)
+            self._playMenu.add.text_input("Filename: ", align = pygame_menu.locals.ALIGN_LEFT, textinput_id="saveFileName", input_underline="_", input_underline_len=15)
+            self._playMenu.add.button("Save Game", self._onSavePlayfield, align = pygame_menu.locals.ALIGN_LEFT)
         else:
             self._playMenu.add.none_widget()
             self._playMenu.add.label("Save directory not found", align = pygame_menu.locals.ALIGN_LEFT)

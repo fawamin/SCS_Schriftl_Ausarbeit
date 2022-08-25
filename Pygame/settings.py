@@ -18,6 +18,10 @@ FPS = 60
 
 TITLE_MAIN_MENU = "Main Menu"
 TITLE_ABOUT = "About"
+TITLE_FROMSETTINGS = "From Settings"
+TITLE_FROMFILE = "LoadFile"
+
+VALIDINTCHARS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 CAPTION_BASE = "GameOfLife"
 CAPTION_MAIN_MENU = CAPTION_BASE + " - " + TITLE_MAIN_MENU
