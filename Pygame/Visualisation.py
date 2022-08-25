@@ -59,13 +59,13 @@ class DisplayGameOfLifeMenu:
         validIntChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
         self.menuPlay.add.toggle_switch("infinity play area: ", settings.DEFAULT_INFINITY_PLAY_AREA, toggleswitch_id = "infinityPlayArea")
-        self.menuPlay.add.text_input("Cell size (px): ", settings.DEFAULT_CELL_SIZE, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 3, textinput_id = "cellSize")
-        self.menuPlay.add.text_input("Cell margin (px): ", settings.DEFAULT_CELL_MARGIN, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellMargin")
-        self.menuPlay.add.text_input("Cell border radius (px): ", settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellBorderRadius")
-        self.menuPlay.add.text_input("Cell hover border width (px): ", settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellHoverBorderWidth")
+        self.menuPlay.add.text_input("Cell size (px): ", settings.DEFAULT_CELL_SIZE, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 3, textinput_id = "cellSize", input_underline="_", input_underline_len = 4)
+        self.menuPlay.add.text_input("Cell margin (px): ", settings.DEFAULT_CELL_MARGIN, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellMargin", input_underline="_", input_underline_len = 3)
+        self.menuPlay.add.text_input("Cell border radius (px): ", settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellBorderRadius", input_underline="_", input_underline_len = 3)
+        self.menuPlay.add.text_input("Cell hover border width (px): ", settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, maxchar = 2, textinput_id = "cellHoverBorderWidth", input_underline="_", input_underline_len = 3)
 
-        self.menuPlay.add.text_input("Columns: ", settings.DEFAULT_COLS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "cols")
-        self.menuPlay.add.text_input("Rows: ", settings.DEFAULT_ROWS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "rows")
+        self.menuPlay.add.text_input("Columns: ", settings.DEFAULT_COLS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "cols", input_underline="_", input_underline_len = 4)
+        self.menuPlay.add.text_input("Rows: ", settings.DEFAULT_ROWS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = validIntChars, textinput_id = "rows", input_underline="_", input_underline_len = 4)
         self.menuPlay.add.button('Start with Setting', self._startGameFromSttings)
 
         self.menuPlay.add.vertical_margin(vMargin)
