@@ -1,6 +1,12 @@
 import pygame
 import pygame_menu
 
+
+
+#User Changeable Variables
+######################################################################################
+
+#Defines Window Size on Startup
 WINDOW_SIZE = {
     "WGA":(854, 480),
     "HD": (1280, 720),
@@ -12,21 +18,79 @@ WINDOW_SIZE = {
     "custom": (1600, 900),
 }["custom"]
 
-MIN_WINDOW_SIZE = (640, 360)
-
+#FPS Setting
 FPS = 60
 
+#Save Directory location relative to Main Folder
+DIR_SAVE = "./Pygame/Saves/"
+
+
+#Default Values for Game Creation
+DEFAULT_ROWS = 30
+DEFAULT_COLS = 30
+DEFAULT_INFINITY_PLAY_AREA = False
+DEFAULT_CELL_SIZE = 15
+DEFAULT_CELL_MARGIN = 2
+DEFAULT_CELL_BORDER_RADIUS = 2
+DEFAULT_CELL_HOVER_BORDER_WIDTH = 2
+
+
+#Patterns for Playing 
+PATTERNS = {
+    # "description": list (rows)[list (columns)[cell state (int | None), < 0 | None = ignord, 0 kill cell, > 0 = born cell>]]
+    "block": [[1, 1], [1, 1]],
+    "beehive": [[1, 0, 0, 1], [1, 0, 0, 1], [1, 0, 0, 1]],
+    "leaf": [[0, 1, 0, 0], [1, 0, 1, 0], [1, 0, 0, 1], [0, 1, 1, 0]],
+    "boat": [[0, 1, 0], [1, 0, 1], [0, 1, 1]],
+    "tub": [[0, 1, 0], [1, 0, 1], [0, 1, 0]],
+    "blinker": [[1, 1, 1]],
+    "toad": [[0, 1, 1, 1], [1, 1, 1, 0]],
+    "beacon": [[1, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 1]],
+    "pulsar": [
+        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
+        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0]
+        ],
+    "glider": [[0, 1, 0], [0, 0, 1], [1, 1, 1]],
+    "LWSS": [[1, 0, 0, 1, 0], [0, 0, 0, 0, 1], [1, 0, 0, 0, 1], [0, 1, 1, 1, 1]],
+    "MWSS": [[0, 0, 1, 0, 0, 0], [1, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1]],
+    "HWSS": [[0, 0, 1, 1, 0, 0, 0], [1, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1, 1]],
+    "snake": [[1, 0, 1, 1], [1, 1, 0, 1]],
+    "ship": [[1, 1, 0], [1, 0, 1], [0, 1, 1]],
+    "aircraft": [[1, 1, 0, 0], [1, 0, 0, 1], [0, 0, 1, 1]],
+    "barge": [[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]],
+    "python": [[0, 0, 0, 1, 1], [1, 0, 1, 0, 1], [1, 1, 0, 0, 0]],
+    "long boat": [[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 1]],
+}
+
+#Don't Change Below
+######################################################################################
+
+#Titles for Menus
 TITLE_MAIN_MENU = "Main Menu"
 TITLE_ABOUT = "About"
-TITLE_FROMSETTINGS = "From Settings"
-TITLE_FROMFILE = "LoadFile"
+TITLE_FROMSETTINGS = "New Game"
+TITLE_FROMFILE = "Load File"
 
+#Valid integer for User unput
 VALIDINTCHARS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
+#Captions for Menus
 CAPTION_BASE = "GameOfLife"
 CAPTION_MAIN_MENU = CAPTION_BASE + " - " + TITLE_MAIN_MENU
 CAPTION_ABOUT = CAPTION_BASE + " - " + TITLE_ABOUT
 
+#About Section
 ABOUT = [
     f'Author: Steffen Hill, Fabian Waltermann',
     f'Pygame {pygame.__version__}',
@@ -35,13 +99,6 @@ ABOUT = [
 
 FONT_SIZE = 20
 
-DEFAULT_ROWS = 30
-DEFAULT_COLS = 30
-DEFAULT_INFINITY_PLAY_AREA = False
-DEFAULT_CELL_SIZE = 15
-DEFAULT_CELL_MARGIN = 2
-DEFAULT_CELL_BORDER_RADIUS = 2
-DEFAULT_CELL_HOVER_BORDER_WIDTH = 2
 DAY_CYCEL_SPEEDS = {
     # "description": milliseconds between each day
     "5 s/d": 5000,
@@ -100,48 +157,11 @@ COLOR_CELL = {
     41: {"STATE": "GEN_41", "MIN_DAYS": 400, "COLOR": (255, 0, 0)},
 }
 
+
+MIN_WINDOW_SIZE = (640, 360)
+
 MAX_DAY_COUNT = 500
 
 COLOR_PLAY_SURFACE_BACKGROUND = (1, 0, 0)
 # IMPORTANT: If not None, this color needs to be different from other Cell colors
 COLOR_PLAY_SURFACE_COLORKEY = COLOR_PLAY_SURFACE_BACKGROUND # COLOR_PLAYSURFACE_BACKGROUND | None
-
-DIR_SAVE = "./Pygame/Saves/"
-
-#Presaved Patterns
-PATTERNS = {
-    # "description": list (rows)[list (columns)[cell state (int | None), < 0 | None = ignord, 0 kill cell, > 0 = born cell>]]
-    "block": [[1, 1], [1, 1]],
-    "beehive": [[1, 0, 0, 1], [1, 0, 0, 1], [1, 0, 0, 1]],
-    "leaf": [[0, 1, 0, 0], [1, 0, 1, 0], [1, 0, 0, 1], [0, 1, 1, 0]],
-    "boat": [[0, 1, 0], [1, 0, 1], [0, 1, 1]],
-    "tub": [[0, 1, 0], [1, 0, 1], [0, 1, 0]],
-    "blinker": [[1, 1, 1]],
-    "toad": [[0, 1, 1, 1], [1, 1, 1, 0]],
-    "beacon": [[1, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 1]],
-    "pulsar": [
-        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
-        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
-        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-        [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0]
-        ],
-    "glider": [[0, 1, 0], [0, 0, 1], [1, 1, 1]],
-    "LWSS": [[1, 0, 0, 1, 0], [0, 0, 0, 0, 1], [1, 0, 0, 0, 1], [0, 1, 1, 1, 1]],
-    "MWSS": [[0, 0, 1, 0, 0, 0], [1, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1]],
-    "HWSS": [[0, 0, 1, 1, 0, 0, 0], [1, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1, 1]],
-    "snake": [[1, 0, 1, 1], [1, 1, 0, 1]],
-    "ship": [[1, 1, 0], [1, 0, 1], [0, 1, 1]],
-    "aircraft": [[1, 1, 0, 0], [1, 0, 0, 1], [0, 0, 1, 1]],
-    "barge": [[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]],
-    "python": [[0, 0, 0, 1, 1], [1, 0, 1, 0, 1], [1, 1, 0, 0, 0]],
-    "long boat": [[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 1]],
-}
