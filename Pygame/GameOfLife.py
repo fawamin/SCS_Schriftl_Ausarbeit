@@ -7,7 +7,9 @@ from Settings import MAX_DAY_COUNT
 
 class GameOfLife:
 
-    # Play area
+    #Set that contains all living cell positions
+    livingCells: set()
+    #Playarea that Contains Cells and Cell Age
     array: numpy.ndarray
     cols: int
     rows: int
@@ -31,6 +33,7 @@ class GameOfLife:
         self.cols = cols
         self.rows = rows
         self.infinityPlayArea = infinityPlayArea
+        self.livingCells = set()
 
 
     # Creates a new GameOfLife instance with the given settings
@@ -43,8 +46,7 @@ class GameOfLife:
         :param infinityPlayArea: If true, the play area borders are connected.
         :return: The new GameOfLife instance.
         """
-        return cls(numpy.zeros((cols, rows)), cols, rows, infinityPlayArea)
-
+        return cls(numpy.zeros((cols, rows), dtype = int), cols, rows, infinityPlayArea)
 
     # Creates a new GameOfLife Instance from loaded File
     @classmethod
@@ -94,30 +96,41 @@ class GameOfLife:
         """
         return self.array.copy()
 
+    # Returns living Cell set
+    def getlivingCells(self):
+        """
+        Returns currently living Cellpositions
+        :return: Set of Living cells
+        """
+        return self.livingCells.copy()
 
     # birth a new cell at the given position
     def birthCell(self, x: int, y: int):
         """
-        Borns a new cell at the given position.
-        :param x: The x coordinate of the cell to born.
-        :param y: The y coordinate of the cell to born.
+        Creates a new cell at the given position.
+        :param x: The x coordinate of the cell to be created.
+        :param y: The y coordinate of the cell to be created.
         """
         if not 0 <= x < self.cols or not 0 <= y < self.rows:
             raise ValueError("Invalid cell position (0 <= x < {sef.cols}, 0 <= y < {self.rows})")
         if self.array[x, y] == 0:
             self.array[x, y] =  1
+        self.livingCells.add((x, y))
 
 
     # kills the cell at the given position
     def killCell(self, x: int, y: int):
         """
-        Kills a cell at the given position.
+        Kills the cell at the given position.
         :param x: The x coordinate of the cell to kill.
         :param y: The y coordinate of the cell to kill.
         """
         if not 0 <= x < self.cols or not 0 <= y < self.rows:
             raise ValueError("Invalid cell position (0 <= x < {sef.cols}, 0 <= y < {self.rows})")
         self.array[x, y] = 0
+        if (x, y) in self.livingCells:
+            self.livingCells.remove((x, y))
+        
 
 
     # toggles the cell at the given position
@@ -129,8 +142,12 @@ class GameOfLife:
         """
         if not 0 <= x < self.cols or not 0 <= y < self.rows:
             raise ValueError("Invalid cell position (0 <= x < {sef.cols}, 0 <= y < {self.rows})")
-        self.array[x, y] = 1 if self.array[x, y] == 0 else 0
-
+        if self.array[x, y] == 0:
+            self.array[x, y] = 1
+            self.livingCells.add((x, y))
+        else:
+            self.array[x, y] = 0
+            self.livingCells.remove((x, y))
 
     # Get the number of living neighbors of the current cell
     def getLiveNeighbors(self, x: int, y: int):
@@ -146,8 +163,10 @@ class GameOfLife:
         liveNeighbors = 0
         if self.infinityPlayArea:
             for i in [-1, 0, 1]:
+                row = (y + i) % self.rows
                 for j in [-1, 0, 1]:
-                    if self.array[(x + j) % self.cols, (y + i) % self.rows] >= 1:
+                    col = (x + j) % self.cols
+                    if self.array[col, row] >= 1:
                         liveNeighbors += 1
         else:
             for i in range(max(0, y - 1), min(self.rows, y + 2)):
@@ -160,33 +179,63 @@ class GameOfLife:
 
         return liveNeighbors
 
+    def InfinityEnabled(self):
+        """
+        Creates List of Cells that have at least 1 living neighbor Cell including over and underflow of coordinates
+        :return: List of Cells
+        """
+        potentialCells = set()
+        for x,y in self.livingCells:
+            for i in [-1, 0, 1]:
+                row = (y + i) % self.rows
+                for j in [-1, 0, 1]:
+                    col = (x + j) % self.cols
+                    potentialCells.add((col, row))     
+        return potentialCells
 
-    # cycles the GameOfLife one Day
+
+    def InfinityDisabled(self):
+        """
+        Creates List of Cells that have at least 1 living neighbor Cell excluding over and underflow of coordinates
+        :return: List of Cells
+        """
+        potentialCells = set()
+        for x,y in self.livingCells:
+            for row in range(max(0, y - 1), min(self.rows, y + 2)):
+                for col in range(max(0, x - 1), min(self.cols, x + 2)): 
+                    potentialCells.add((col, row))
+        return potentialCells
+
     def cycleDay(self):
         """
-        Cycles the GameOfLife one Day.
+        Cycles To the Next Day
         """
-        # Create a copy of the current state of the GameOfLife
-        # This is necessary to avoid modifying the current state of the GameOfLife
-        # while iterating over it.
-        newDay = numpy.zeros(self.array.shape, dtype = int)
-        # Iterate over the current state of the GameOfLife
-        for row in range(self.rows):
-            for col in range(self.cols):
-                # Get the number of live neighbors of the current cell
+        #Is there a Cell alive
+        if len(self.livingCells) != 0:
+            #Find Potential Cells Depending on Game setting
+            if self.infinityPlayArea:
+                potentialCells = self.InfinityEnabled()
+            else:
+                potentialCells = self.InfinityDisabled()
+            #Set of new Living Cells
+            living = set()
+            #Array of next Day
+            newDay = numpy.zeros(self.array.shape, dtype = int)
+            #Go through all Cells that might live
+            for col,row in potentialCells:
+                #Calculate Neigbors
                 liveNeighbors = self.getLiveNeighbors(col, row)
-
-                # Determine the new state of the current cell
                 if self.array[col, row] >= 1:
                     if liveNeighbors == 2 or liveNeighbors == 3:
                         dayCount = self.array[col, row]
                         if dayCount < MAX_DAY_COUNT:
                             dayCount += 1
                         newDay[col, row] = dayCount
-                    # else: newDay[col, row] = 0 no cange already set (default for newDay)
+                        living.add((col, row))
                 else:
                     if liveNeighbors == 3:
                         newDay[col, row] = 1
-                    # else: newDay[col, row] = 0 no cange already set (default for newDay)
-        # Update the current state of the GameOfLife
-        self.array = newDay
+                        living.add((col, row))
+            #Overwrite old day with new Day
+            self.array = newDay
+            self.livingCells = living
