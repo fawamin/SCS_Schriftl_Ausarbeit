@@ -239,7 +239,7 @@ class DisplayGameOfLife:
             align = pygame_menu.locals.ALIGN_LEFT
         )
 
-        self._renderPlaySurface()
+        self._renderPlaySurface(renderAll = True)
 
 
     # is enabled
@@ -255,28 +255,25 @@ class DisplayGameOfLife:
 
         # if crtl is pressed ignore cells to kill
         ctrlPressd = True if pygame.key.get_mods() & pygame.KMOD_CTRL else False
-        playSurfaceChanged = False
+        updatedCells = set()
 
         for event in events:
             if event.type == self._dayCycleEvent.type:
                 # cicle day and render play surface
-                self._gol.cycleDay()
-                playSurfaceChanged = True
+                updatedCells.update(self._gol.cycleDay())
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     #Pattern active or not
                     if self._patternActive:
-                        self._setPattern(self._currentPattern, ctrlPressd)
+                        updatedCells.update(self._setPattern(self._currentPattern, ctrlPressd))
                     else:
-                        self._toggleCell()
-                    playSurfaceChanged = True
+                        updatedCells.update(self._toggleCell())
                 elif event.button == 3:
                     # set pattern invert patter
-                    self._setPattern(self._currentPattern, ctrlPressd, True)
-                    playSurfaceChanged = True
+                    updatedCells.update(self._setPattern(self._currentPattern, ctrlPressd, True))
 
-        if playSurfaceChanged:
-            self._renderPlaySurface()
+        if len(updatedCells) > 0:
+            self._renderPlaySurface(updatedCells)
 
         self._drawSurface.blit(self.playSurface, (0, 0))
         self._previewPattern(self._currentPattern, ctrlPressd)
@@ -392,7 +389,7 @@ class DisplayGameOfLife:
 
 
     # render play surface
-    def _renderPlaySurface(self):
+    def _renderPlaySurface(self, updatedCells: set[tuple[int, int]] = set(), renderAll: bool = False):
         # check if game is not started
         if not self._gameStarted:
             raise Exception("Game is not started")
@@ -401,18 +398,44 @@ class DisplayGameOfLife:
         if not self._valuesSet:
             raise Exception("Values are not set")
 
-        # clear play surface
-        self.playSurface.fill(Settings.COLOR_PLAY_SURFACE_BACKGROUND)
-        self.playSurface.set_colorkey(Settings.COLOR_PLAY_SURFACE_COLORKEY)
-        # self.playSurface.set_alpha(255)
-
         # get field
         field = self._gol.getField()
 
-        # draw cells
-        for row in range(self._rows):
-            y = row * self._totalCellSize + self._cellMargin
-            for col in range(self._cols):
+        if renderAll:
+            # clear play surface
+            self.playSurface.fill(Settings.COLOR_PLAY_SURFACE_BACKGROUND)
+            self.playSurface.set_colorkey(Settings.COLOR_PLAY_SURFACE_COLORKEY)
+            # self.playSurface.set_alpha(255)
+
+            # draw cells
+            for row in range(self._rows):
+                y = row * self._totalCellSize + self._cellMargin
+                for col in range(self._cols):
+                    x = col * self._totalCellSize + self._cellMargin
+                    # set cell colour
+                    cellDay = field[col, row]
+                    color = None
+                    # get cell colour from highest minimum day
+                    for gen in Settings.COLOR_CELL:
+                        if cellDay >= Settings.COLOR_CELL[gen]["MIN_DAYS"]:
+                            color = Settings.COLOR_CELL[gen]["COLOR"]
+                        else:
+                            break
+                    # check if colour is set
+                    if color is None:
+                        raise Exception("No colour found for cell day " + str(cellDay))
+
+                    # draw cell
+                    pygame.draw.rect(
+                        self.playSurface,
+                        color,
+                        (x, y, self._cellSize, self._cellSize),
+                        border_radius = self._cellBorderRadius
+                    )
+        else:
+            # draw cell updates
+            for col, row in updatedCells:
+                y = row * self._totalCellSize + self._cellMargin
                 x = col * self._totalCellSize + self._cellMargin
                 # set cell colour
                 cellDay = field[col, row]
@@ -575,6 +598,7 @@ class DisplayGameOfLife:
             if index[0] + maxPatternWidth > self._cols or index[1] + maxPatternHight > self._rows:
                 index = None
 
+        updatedCells = set()
         if index is not None:
             for i in range(len(pattern)):
                 row = index[1] + i
@@ -601,6 +625,8 @@ class DisplayGameOfLife:
                         self._gol.killCell(col, row)
                     else: # > 0
                         self._gol.birthCell(col, row)
+                    updatedCells.add((col, row))
+        return updatedCells
 
 
     #Toggles the Current Cell between alive and dead
@@ -613,6 +639,9 @@ class DisplayGameOfLife:
         if not self._valuesSet:
             raise Exception("Values are not set")
 
+        updatedCells = set()
         index = self._calculateIndex()
         if index is not None:
             self._gol.toggleCell(index[0], index[1])
+            updatedCells.add(index)
+        return updatedCells

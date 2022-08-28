@@ -214,8 +214,10 @@ class GameOfLife:
     def cycleDay(self):
         """
         Cycles To the Next Day
+        :return: Set of Cells that have could have changed their state
         """
         #Is there a Cell alive
+        updatedCells = set()
         if len(self.livingCells) != 0:
             #Find Potential Cells Depending on Game setting
             if self.infinityPlayArea:
@@ -237,6 +239,8 @@ class GameOfLife:
                             dayCount += 1
                         newDay[col, row] = dayCount
                         living.add((col, row))
+                    else:
+                        updatedCells.add((col, row))
                 else:
                     if liveNeighbors == 3:
                         newDay[col, row] = 1
@@ -244,3 +248,5 @@ class GameOfLife:
             #Overwrite old day with new Day
             self.array = newDay
             self.livingCells = living
+            updatedCells.update(living)
+        return updatedCells
