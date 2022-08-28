@@ -17,7 +17,7 @@ class GameOfLife:
 
 
     # Create new instance of GameOfLife with the given settings
-    def __init__(self, array: numpy.ndarray, cols: int, rows: int, livingCells: set() ,infinityPlayArea: bool = False):
+    def __init__(self, array: numpy.ndarray, cols: int, rows: int, livingCells: set(), infinityPlayArea: bool = False):
         """
         Initializes a new GameOfLife instance with the given settings.
         :param array: The play area of the GameOfLife.
@@ -46,7 +46,7 @@ class GameOfLife:
         :param infinityPlayArea: If true, the play area borders are connected.
         :return: The new GameOfLife instance.
         """
-        return cls(numpy.zeros((cols, rows), dtype = int), cols, rows, set(), infinityPlayArea,)
+        return cls(numpy.zeros((cols, rows), dtype = int), cols, rows, set(), infinityPlayArea)
 
     # Creates a new GameOfLife Instance from loaded File
     @classmethod
@@ -63,8 +63,8 @@ class GameOfLife:
             raise ValueError("Could not load file: \n" + str(e))
         cols, rows = array.shape
         cells = set()
-        for row in range(rows):
-            for col in range(cols):
+        for col in range(cols):
+            for row in range(rows):
                 if array[col,row] >= 1:
                     cells.add((col,row))
         return cls(array, cols, rows, cells, infinityPlayArea)
