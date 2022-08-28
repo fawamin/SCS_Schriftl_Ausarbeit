@@ -177,7 +177,8 @@ class DisplayGameOfLife:
 
         self._playMenu.add.toggle_switch("Selection Type:", state_text = ("single", "pattern"), onchange = self._onSelectionTypeChange, align = pygame_menu.locals.ALIGN_LEFT)
         patterns =  []
-        for pattern in Settings.PATTERNS:
+        for key in Settings.PATTERNS:
+            pattern = Settings.PATTERNS[key]
             maxPatternHight = len(pattern)
             if maxPatternHight > self._rows:
                 continue
@@ -186,7 +187,7 @@ class DisplayGameOfLife:
                 maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
             if maxPatternWidth > self._cols:
                 continue
-            patterns.append((pattern, Settings.PATTERNS[pattern]))
+            patterns.append((key, pattern))
 
         if len(patterns) > 0:
             self._selectedPattern = patterns[0][1]
