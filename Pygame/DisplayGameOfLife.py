@@ -147,13 +147,14 @@ class DisplayGameOfLife:
             False,
             theme = pygame_menu.themes.THEME_DARK.copy(),
             columns = 3,
-            rows = [1, 11, 2],
+            rows = [1, 12, 2],
         )
         self._playMenu._disable_widget_update_mousepos_mouseselection = True
         self._playMenu.add.horizontal_margin(10)
 
 
         self._playMenu.add.vertical_margin(15)
+        self._playMenu.add.button("Cycle Day", pygame.event.post,self._dayCycleEvent ,align = pygame_menu.locals.ALIGN_LEFT)
         self._playMenu.add.toggle_switch("Day Cycle:", state_text = ("Pause", "Play"), onchange = self._onDayCyclePause, align = pygame_menu.locals.ALIGN_LEFT)
         dayCycleSpeeds = [(speed, Settings.DAY_CYCLE_SPEEDS[speed]) for speed in Settings.DAY_CYCLE_SPEEDS]
         if len(dayCycleSpeeds) > 0:
