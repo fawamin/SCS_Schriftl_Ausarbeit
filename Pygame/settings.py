@@ -77,6 +77,7 @@ PATTERNS = {
 ######################################################################################
 
 #Titles for Menus
+TITLE_BASE = "GameOfLife"
 TITLE_MAIN_MENU = "Main Menu"
 TITLE_ABOUT = "About"
 TITLE_FROMSETTINGS = "New Game"
@@ -84,11 +85,6 @@ TITLE_FROMFILE = "Load File"
 
 #Valid integer for User unput
 VALIDINTCHARS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-
-#Captions for Menus
-CAPTION_BASE = "GameOfLife"
-CAPTION_MAIN_MENU = CAPTION_BASE + " - " + TITLE_MAIN_MENU
-CAPTION_ABOUT = CAPTION_BASE + " - " + TITLE_ABOUT
 
 #About Section
 ABOUT = [
@@ -120,12 +116,12 @@ ABOUT = [
     f'',
     f'Author: Steffen Hill, Fabian Waltermann',
     f'Pygame {pygame.__version__}',
-    f'pygame-menu {pygame_menu.__version__}'
+    f'pygame-menu {pygame_menu.__version__}',
     ]
 
 FONT_SIZE = 20
 
-DAY_CYCEL_SPEEDS = {
+DAY_CYCLE_SPEEDS = {
     # "description": milliseconds between each day
     "5 s/d": 5000,
     "4 s/d": 4000,

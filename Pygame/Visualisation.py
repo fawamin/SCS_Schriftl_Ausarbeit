@@ -1,4 +1,4 @@
-import settings
+import Settings
 import pygame
 import pygame_menu
 import pygame_menu.widgets
@@ -29,11 +29,11 @@ class DisplayGameOfLifeMenu:
         if not pygame.get_init():
             pygame.init()
         # Create the screen
-        self._screen = pygame.display.set_mode(settings.WINDOW_SIZE, pygame.RESIZABLE)
+        self._screen = pygame.display.set_mode(Settings.WINDOW_SIZE, pygame.RESIZABLE)
         # Clock for managing the FPS
         clock = pygame.time.Clock()
         # Set the window title
-        pygame.display.set_caption(settings.CAPTION_BASE)
+        pygame.display.set_caption(Settings.TITLE_BASE)
         # create DisplayGOL instance
         self._dGOL = DisplayGameOfLife(self._screen)
 
@@ -50,7 +50,7 @@ class DisplayGameOfLifeMenu:
         # -------------------------------------------------------------------------
         while True:
             #Tick
-            clock.tick(settings.FPS)
+            clock.tick(Settings.FPS)
 
             # Application events
             events = pygame.event.get()
@@ -60,7 +60,7 @@ class DisplayGameOfLifeMenu:
                     exit()
                 elif event.type == pygame.VIDEORESIZE:
                     width, height = self._screen.get_size()
-                    minWidth, minHeight = settings.MIN_WINDOW_SIZE
+                    minWidth, minHeight = Settings.MIN_WINDOW_SIZE
                     if width < minWidth or height < minHeight:
                         if width < minWidth:
                             width = minWidth
@@ -159,7 +159,7 @@ class DisplayGameOfLifeMenu:
     #Menu where Selection between Loading and creating new game happens
     def _createStartMenu(self):
         self._menuPlay = pygame_menu.Menu(
-            settings.CAPTION_BASE,
+            Settings.TITLE_BASE,
             self._screen.get_width(),
             self._screen.get_height(),
             mouse_motion_selection = True,
@@ -176,18 +176,18 @@ class DisplayGameOfLifeMenu:
 
     def _createFromFileMenu(self):
         self._menuFromFile = pygame_menu.Menu(
-            settings.TITLE_FROMFILE,
+            Settings.TITLE_FROMFILE,
             self._screen.get_width(),
             self._screen.get_height(),
             mouse_motion_selection = True,
             theme = pygame_menu.themes.THEME_DARK.copy(),
         )
 
-        self._menuFromFile.add.toggle_switch("infinity play area: ", settings.DEFAULT_INFINITY_PLAY_AREA, toggleswitch_id = "infinityPlayArea")
-        self._menuFromFile.add.text_input("Cell size (px): ", settings.DEFAULT_CELL_SIZE, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 3, textinput_id = "cellSize", input_underline="_", input_underline_len = 4)
-        self._menuFromFile.add.text_input("Cell margin (px): ", settings.DEFAULT_CELL_MARGIN, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellMargin", input_underline="_", input_underline_len = 3)
-        self._menuFromFile.add.text_input("Cell border radius (px): ", settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellBorderRadius", input_underline="_", input_underline_len = 3)
-        self._menuFromFile.add.text_input("Cell hover border width (px): ", settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellHoverBorderWidth", input_underline="_", input_underline_len = 3)
+        self._menuFromFile.add.toggle_switch("infinity play area: ", Settings.DEFAULT_INFINITY_PLAY_AREA, toggleswitch_id = "infinityPlayArea")
+        self._menuFromFile.add.text_input("Cell size (px): ", Settings.DEFAULT_CELL_SIZE, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 3, textinput_id = "cellSize", input_underline="_", input_underline_len = 4)
+        self._menuFromFile.add.text_input("Cell margin (px): ", Settings.DEFAULT_CELL_MARGIN, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellMargin", input_underline="_", input_underline_len = 3)
+        self._menuFromFile.add.text_input("Cell border radius (px): ", Settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellBorderRadius", input_underline="_", input_underline_len = 3)
+        self._menuFromFile.add.text_input("Cell hover border width (px): ", Settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellHoverBorderWidth", input_underline="_", input_underline_len = 3)
 
         #Savefile list
         saveFiles = [("No file",)] # Placeholder because the list can't be empty (before the menu is opened the list of files gets loaded)
@@ -210,7 +210,7 @@ class DisplayGameOfLifeMenu:
         if saveFileDropSelect is not None and noFileLabel is not None:
             saveFileDropSelect.reset_value()
             try:
-                saveFiles = [(file,) for file in os.listdir(settings.DIR_SAVE) if file.endswith(".npy")]
+                saveFiles = [(file,) for file in os.listdir(Settings.DIR_SAVE) if file.endswith(".npy")]
             except FileNotFoundError:
                 saveFiles = []
             if len(saveFiles) > 0:
@@ -225,7 +225,7 @@ class DisplayGameOfLifeMenu:
 
     def _createFromSettingsMenu(self):
         self._menuFromSettings = pygame_menu.Menu(
-            settings.TITLE_FROMSETTINGS,
+            Settings.TITLE_FROMSETTINGS,
             self._screen.get_width(),
             self._screen.get_height(),
             mouse_motion_selection = True,
@@ -233,15 +233,15 @@ class DisplayGameOfLifeMenu:
         )
 
         #Options for Creation of new Playing Area
-        self._menuFromSettings.add.toggle_switch("infinity play area: ", settings.DEFAULT_INFINITY_PLAY_AREA, toggleswitch_id = "infinityPlayArea")
-        self._menuFromSettings.add.text_input("Cell size (px): ", settings.DEFAULT_CELL_SIZE, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 3, textinput_id = "cellSize", input_underline="_", input_underline_len = 4)
-        self._menuFromSettings.add.text_input("Cell margin (px): ", settings.DEFAULT_CELL_MARGIN, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellMargin", input_underline="_", input_underline_len = 3)
-        self._menuFromSettings.add.text_input("Cell border radius (px): ", settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellBorderRadius", input_underline="_", input_underline_len = 3)
-        self._menuFromSettings.add.text_input("Cell hover border width (px): ", settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellHoverBorderWidth", input_underline="_", input_underline_len = 3)
+        self._menuFromSettings.add.toggle_switch("infinity play area: ", Settings.DEFAULT_INFINITY_PLAY_AREA, toggleswitch_id = "infinityPlayArea")
+        self._menuFromSettings.add.text_input("Cell size (px): ", Settings.DEFAULT_CELL_SIZE, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 3, textinput_id = "cellSize", input_underline="_", input_underline_len = 4)
+        self._menuFromSettings.add.text_input("Cell margin (px): ", Settings.DEFAULT_CELL_MARGIN, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellMargin", input_underline="_", input_underline_len = 3)
+        self._menuFromSettings.add.text_input("Cell border radius (px): ", Settings.DEFAULT_CELL_BORDER_RADIUS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellBorderRadius", input_underline="_", input_underline_len = 3)
+        self._menuFromSettings.add.text_input("Cell hover border width (px): ", Settings.DEFAULT_CELL_HOVER_BORDER_WIDTH, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, maxchar = 2, textinput_id = "cellHoverBorderWidth", input_underline="_", input_underline_len = 3)
 
         #Playarea Size
-        self._menuFromSettings.add.text_input("Columns: ", settings.DEFAULT_COLS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, textinput_id = "cols", input_underline="_", input_underline_len = 4)
-        self._menuFromSettings.add.text_input("Rows: ", settings.DEFAULT_ROWS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = settings.VALIDINTCHARS, textinput_id = "rows", input_underline="_", input_underline_len = 4)
+        self._menuFromSettings.add.text_input("Columns: ", Settings.DEFAULT_COLS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, textinput_id = "cols", input_underline="_", input_underline_len = 4)
+        self._menuFromSettings.add.text_input("Rows: ", Settings.DEFAULT_ROWS, input_type = pygame_menu.locals.INPUT_INT, valid_chars = Settings.VALIDINTCHARS, textinput_id = "rows", input_underline="_", input_underline_len = 4)
         self._menuFromSettings.add.button('Start', self._startGameFromSettings)
         self._menuFromSettings.add.button('Back', pygame_menu.events.BACK)
 
@@ -249,7 +249,7 @@ class DisplayGameOfLifeMenu:
     #Menu With information about the Program
     def _createAboutMenu(self):
         self._menuAbout = pygame_menu.Menu(
-            settings.TITLE_ABOUT,
+            Settings.TITLE_ABOUT,
             self._screen.get_width(),
             self._screen.get_height(),
             mouse_motion_selection = True,
@@ -257,15 +257,15 @@ class DisplayGameOfLifeMenu:
         )
         self._menuAbout._disable_widget_update_mousepos_mouseselection = True
 
-        for about in settings.ABOUT:
-          self._menuAbout.add.label(about, align=pygame_menu.locals.ALIGN_CENTER, font_size=settings.FONT_SIZE)
+        for about in Settings.ABOUT:
+          self._menuAbout.add.label(about, align=pygame_menu.locals.ALIGN_CENTER, font_size=Settings.FONT_SIZE)
         self._menuAbout.add.vertical_margin(30)
         self._menuAbout.add.button('Return to menu', pygame_menu.events.BACK)
 
 
     def _createMainMenu(self):
             self._menuMain = pygame_menu.Menu(
-                settings.TITLE_MAIN_MENU,
+                Settings.TITLE_MAIN_MENU,
                 self._screen.get_width(),
                 self._screen.get_height(),
                 mouse_motion_selection = True,

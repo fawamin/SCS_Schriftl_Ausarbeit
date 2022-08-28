@@ -1,7 +1,7 @@
 import numpy
 import warnings
 from os import PathLike
-from settings import MAX_DAY_COUNT
+from Settings import MAX_DAY_COUNT
 
 
 

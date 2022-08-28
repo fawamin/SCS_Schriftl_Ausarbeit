@@ -1,4 +1,4 @@
-import settings
+import Settings
 import pygame
 import pygame_menu
 import pygame_menu.widgets
@@ -25,9 +25,9 @@ class DisplayGameOfLife:
     _menuMain: pygame_menu.Menu | None
     _gameStarted: bool
     _valuesSet: bool
-    _dayCycelEvent: pygame.event.Event
-    _dayCycelPlay : bool
-    _dayCycelSpeed: int
+    _dayCycleEvent: pygame.event.Event
+    _dayCyclePlay : bool
+    _dayCycleSpeed: int
     _patternActive: bool
     _selectedPattern: list[list[int | None]]
     _currentPattern: list[list[int | None]]
@@ -47,7 +47,7 @@ class DisplayGameOfLife:
         self._screen = screen
         self._gameStarted = False
         self._valuesSet = False
-        self._dayCycelEvent = pygame.event.Event(pygame.USEREVENT)
+        self._dayCycleEvent = pygame.event.Event(pygame.USEREVENT)
 
 
     # start new game
@@ -141,7 +141,7 @@ class DisplayGameOfLife:
 
         # create play menu
         self._playMenu = pygame_menu.Menu(
-            settings.CAPTION_BASE,
+            Settings.TITLE_BASE,
             self._screen.get_width(),
             self._screen.get_height(),
             False,
@@ -155,9 +155,9 @@ class DisplayGameOfLife:
 
         self._playMenu.add.vertical_margin(15)
         self._playMenu.add.toggle_switch("Day Cycle:", state_text = ("Pause", "Play"), onchange = self._onDayCyclePause, align = pygame_menu.locals.ALIGN_LEFT)
-        dayCycleSpeeds = [(speed, settings.DAY_CYCEL_SPEEDS[speed]) for speed in settings.DAY_CYCEL_SPEEDS]
+        dayCycleSpeeds = [(speed, Settings.DAY_CYCLE_SPEEDS[speed]) for speed in Settings.DAY_CYCLE_SPEEDS]
         if len(dayCycleSpeeds) > 0:
-            self._dayCycelSpeed = dayCycleSpeeds[0][1]
+            self._dayCycleSpeed = dayCycleSpeeds[0][1]
             self._playMenu.add.dropselect(
                 "Day Cycle Speed:",
                 dayCycleSpeeds,
@@ -169,14 +169,14 @@ class DisplayGameOfLife:
                 align = pygame_menu.locals.ALIGN_LEFT
             )
         else:
-            self._dayCycelSpeed = 0
+            self._dayCycleSpeed = 0
             self._playMenu.add.label("No Day Cycle Speeds set", align = pygame_menu.locals.ALIGN_LEFT)
         # pause Game on new start
         self._onDayCyclePause(False)
 
         self._playMenu.add.toggle_switch("Selection Type:", state_text = ("single", "pattern"), onchange = self._onSelectionTypeChange, align = pygame_menu.locals.ALIGN_LEFT)
         patterns =  []
-        for pattern in settings.PATTERNS:
+        for pattern in Settings.PATTERNS:
             maxPatternHight = len(pattern)
             if maxPatternHight > self._rows:
                 continue
@@ -185,7 +185,7 @@ class DisplayGameOfLife:
                 maxPatternWidth = max(maxPatternWidth, len(pattern[i]))
             if maxPatternWidth > self._cols:
                 continue
-            patterns.append((pattern, settings.PATTERNS[pattern]))
+            patterns.append((pattern, Settings.PATTERNS[pattern]))
 
         if len(patterns) > 0:
             self._selectedPattern = patterns[0][1]
@@ -206,7 +206,7 @@ class DisplayGameOfLife:
         self._onSelectionTypeChange(False)
 
         # add option to save playfield to file
-        if os.path.isdir(settings.DIR_SAVE):
+        if os.path.isdir(Settings.DIR_SAVE):
             self._playMenu.add.toggle_switch("allow overwrite:", state_text = ("No", "Yes"), align = pygame_menu.locals.ALIGN_LEFT, toggleswitch_id="overwrite")
             self._playMenu.add.text_input("Filename: ", align = pygame_menu.locals.ALIGN_LEFT, textinput_id="saveFileName", input_underline="_", input_underline_len=15)
             self._playMenu.add.button("Save Game", self._onSavePlayfield, align = pygame_menu.locals.ALIGN_LEFT)
@@ -223,8 +223,8 @@ class DisplayGameOfLife:
 
         # create draw Surface
         self._drawSurface = pygame.Surface(size = (self._cols * self._totalCellSize, self._rows * self._totalCellSize))
-        self._drawSurface.fill(settings.COLOR_PLAY_SURFACE_BACKGROUND)
-        self._drawSurface.set_colorkey(settings.COLOR_PLAY_SURFACE_COLORKEY)
+        self._drawSurface.fill(Settings.COLOR_PLAY_SURFACE_BACKGROUND)
+        self._drawSurface.set_colorkey(Settings.COLOR_PLAY_SURFACE_COLORKEY)
 
         # create play Surface
         self.playSurface = pygame.Surface(size = self._drawSurface.get_size())
@@ -257,7 +257,7 @@ class DisplayGameOfLife:
         playSurfaceChanged = False
 
         for event in events:
-            if event.type == self._dayCycelEvent.type:
+            if event.type == self._dayCycleEvent.type:
                 # cicle day and render play surface
                 self._gol.cycleDay()
                 playSurfaceChanged = True
@@ -328,9 +328,9 @@ class DisplayGameOfLife:
     def _onDayCyclePause(self,  play: bool):
         speed = 0
         if play:
-            speed = self._dayCycelSpeed
-        pygame.time.set_timer(self._dayCycelEvent.type, speed)
-        self._dayCycelPlay = play
+            speed = self._dayCycleSpeed
+        pygame.time.set_timer(self._dayCycleEvent.type, speed)
+        self._dayCyclePlay = play
 
 
     # on day cycle speed change
@@ -343,9 +343,9 @@ class DisplayGameOfLife:
             raise Exception("Values are not set")
         speed = selectedItemIndex[0][1]
         # set time for day cycle event if day cycle is play
-        if self._dayCycelPlay:
-            pygame.time.set_timer(self._dayCycelEvent.type, speed)
-        self._dayCycelSpeed = speed
+        if self._dayCyclePlay:
+            pygame.time.set_timer(self._dayCycleEvent.type, speed)
+        self._dayCycleSpeed = speed
 
 
     # on selection type change
@@ -373,14 +373,14 @@ class DisplayGameOfLife:
         if not self._valuesSet:
             raise Exception("Values are not set")
         # check if save directory is not found
-        if not os.path.isdir(settings.DIR_SAVE):
+        if not os.path.isdir(Settings.DIR_SAVE):
             return
         # get save file name
         saveFileName = self._playMenu.get_widget("saveFileName").get_value()
         # check if save file name is not empty
         if saveFileName == "":
             return
-        saveFilePath = os.path.join(settings.DIR_SAVE, saveFileName)
+        saveFilePath = os.path.join(Settings.DIR_SAVE, saveFileName)
         if saveFilePath.endswith(".npy"):
             saveFilePath = saveFilePath[:-4]
         # check if save file name is not in use
@@ -401,8 +401,8 @@ class DisplayGameOfLife:
             raise Exception("Values are not set")
 
         # clear play surface
-        self.playSurface.fill(settings.COLOR_PLAY_SURFACE_BACKGROUND)
-        self.playSurface.set_colorkey(settings.COLOR_PLAY_SURFACE_COLORKEY)
+        self.playSurface.fill(Settings.COLOR_PLAY_SURFACE_BACKGROUND)
+        self.playSurface.set_colorkey(Settings.COLOR_PLAY_SURFACE_COLORKEY)
         # self.playSurface.set_alpha(255)
 
         # get field
@@ -417,9 +417,9 @@ class DisplayGameOfLife:
                 cellDay = field[col, row]
                 color = None
                 # get cell colour from highest minimum day
-                for gen in settings.COLOR_CELL:
-                    if cellDay >= settings.COLOR_CELL[gen]["MIN_DAYS"]:
-                        color = settings.COLOR_CELL[gen]["COLOR"]
+                for gen in Settings.COLOR_CELL:
+                    if cellDay >= Settings.COLOR_CELL[gen]["MIN_DAYS"]:
+                        color = Settings.COLOR_CELL[gen]["COLOR"]
                     else:
                         break
                 # check if colour is set
@@ -534,7 +534,7 @@ class DisplayGameOfLife:
                     )
                     pygame.draw.rect(
                         previewSurface,
-                        settings.COLOR_PLAY_SURFACE_BACKGROUND,
+                        Settings.COLOR_PLAY_SURFACE_BACKGROUND,
                         (spaceX, spaceY, self._cellSpaceSize, self._cellSpaceSize),
                         border_radius = self._cellBorderRadius
                     )
