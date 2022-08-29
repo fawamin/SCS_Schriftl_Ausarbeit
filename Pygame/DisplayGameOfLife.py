@@ -277,7 +277,9 @@ class DisplayGameOfLife:
             self._renderPlaySurface(updatedCells)
 
         self._drawSurface.blit(self.playSurface, (0, 0))
-        self._previewPattern(self._currentPattern, ctrlPressd)
+        # disables the preview of Patterns if cellHoverBorderWidth is 0 (self._cellSpaceMargin == self._cellMargin)
+        if self._cellSpaceMargin != self._cellMargin:
+            self._previewPattern(self._currentPattern, ctrlPressd)
         self._playWidget.force_menu_surface_update()
 
         self._playMenu.update(events)
