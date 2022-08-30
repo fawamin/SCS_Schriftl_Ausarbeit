@@ -158,6 +158,9 @@ class DisplayGameOfLifeMenu:
 
     #Menu where Selection between Loading and creating new game happens
     def _createStartMenu(self):
+        """
+        Method that creates Menu where the player chooses between creating a new or loading a existing Game
+        """
         self._menuPlay = pygame_menu.Menu(
             Settings.TITLE_BASE,
             self._screen.get_width(),
@@ -175,6 +178,9 @@ class DisplayGameOfLifeMenu:
 
 
     def _createFromFileMenu(self):
+        """
+        Method that creates Menu to load a savefile
+        """
         self._menuFromFile = pygame_menu.Menu(
             Settings.TITLE_FROMFILE,
             self._screen.get_width(),
@@ -205,6 +211,10 @@ class DisplayGameOfLifeMenu:
 
 
     def _updateSaveFileList(self, *kwarg):
+        """
+        Method that Updates the Files listed in the Drop down widget
+        :param *kwarg: unused
+        """
         saveFileDropSelect = self._menuFromFile.get_widget("saveFile")
         noFileLabel = self._menuFromFile.get_widget("noFileLabel")
         if saveFileDropSelect is not None and noFileLabel is not None:
@@ -224,6 +234,9 @@ class DisplayGameOfLifeMenu:
 
 
     def _createFromSettingsMenu(self):
+        """
+        Creates the Menu to start a new game with the input settings
+        """
         self._menuFromSettings = pygame_menu.Menu(
             Settings.TITLE_FROMSETTINGS,
             self._screen.get_width(),
@@ -248,6 +261,9 @@ class DisplayGameOfLifeMenu:
 
     #Menu With information about the Program
     def _createAboutMenu(self):
+        """
+        Method that creates Menu with information about the game and the program
+        """
         self._menuAbout = pygame_menu.Menu(
             Settings.TITLE_ABOUT,
             self._screen.get_width(),
@@ -264,18 +280,21 @@ class DisplayGameOfLifeMenu:
 
 
     def _createMainMenu(self):
-            self._menuMain = pygame_menu.Menu(
-                Settings.TITLE_MAIN_MENU,
-                self._screen.get_width(),
-                self._screen.get_height(),
-                mouse_motion_selection = True,
-                theme = pygame_menu.themes.THEME_DARK.copy(),
-            )
-            self._menuMain._disable_widget_update_mousepos_mouseselection = True
+        """
+        Method that creates the main menu
+        """
+        self._menuMain = pygame_menu.Menu(
+            Settings.TITLE_MAIN_MENU,
+            self._screen.get_width(),
+            self._screen.get_height(),
+            mouse_motion_selection = True,
+            theme = pygame_menu.themes.THEME_DARK.copy(),
+        )
+        self._menuMain._disable_widget_update_mousepos_mouseselection = True
 
-            self._menuMain.add.button('Play', self._menuPlay)
-            self._menuMain.add.button('About', self._menuAbout)
-            self._menuMain.add.button('Quit', pygame_menu.events.EXIT)
+        self._menuMain.add.button('Play', self._menuPlay)
+        self._menuMain.add.button('About', self._menuAbout)
+        self._menuMain.add.button('Quit', pygame_menu.events.EXIT)
 
 
 if __name__ == '__main__':
