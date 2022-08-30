@@ -22,7 +22,7 @@ WINDOW_SIZE = {
 FPS = 60
 
 #Save Directory location relative to Main Folder
-DIR_SAVE = "./Pygame/Saves/"
+DIR_SAVE = "./Saves/"
 
 
 #Default Values for Game Creation

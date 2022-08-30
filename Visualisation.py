@@ -138,7 +138,7 @@ class DisplayGameOfLifeMenu:
         data = self._menuFromFile.get_input_data()
         for key in data:
             if key == "saveFile":
-                saveFile = "Pygame/Saves/" + data[key][0][0]
+                saveFile = Settings.DIR_SAVE + data[key][0][0]
             elif key == "infinityPlayArea":
                 infinityPlayArea = bool(data[key])
             elif key == "cellSize":
